@@ -1,0 +1,4616 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Precificador — Licitações & Propostas</title>
+  <meta name="description" content="Sistema de precificação para licitações e propostas técnicas"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%23f5a524'/><text x='16' y='22' text-anchor='middle' font-family='monospace' font-weight='700' font-size='16' fill='%230a0d12'>PR</text></svg>"/>
+  <style>
+/* ============================================
+   PRECIFICADOR — Design System
+   Estética: industrial técnico refinado
+============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Cores — paleta industrial dark */
+  --bg-0: #0a0d12;
+  --bg-1: #11151c;
+  --bg-2: #1a212b;
+  --bg-3: #232c39;
+  --border: #2a3441;
+  --border-strong: #3a4655;
+
+  --text-0: #e8eef5;
+  --text-1: #b8c3d1;
+  --text-2: #7a8699;
+  --text-3: #4a5566;
+
+  /* Acentos */
+  --accent: #f5a524;       /* âmbar industrial */
+  --accent-soft: #f5a52422;
+  --accent-strong: #ffc04d;
+  --success: #4ade80;
+  --danger: #ef4444;
+  --info: #60a5fa;
+
+  /* Tipografia */
+  --font-display: 'Manrope', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Métricas */
+  --radius: 4px;
+  --radius-lg: 8px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.6);
+
+  --sidebar-w: 240px;
+  --header-h: 64px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: var(--font-display);
+  background: var(--bg-0);
+  color: var(--text-0);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 0% 0%, #1a1f2a 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, #15202c 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-strong); }
+
+/* ============================================
+   LAYOUT
+============================================ */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 100vh;
+}
+
+/* === SIDEBAR === */
+.sidebar {
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-brand {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: var(--radius);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--bg-0);
+  font-size: 14px;
+  position: relative;
+}
+
+.brand-mark::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  opacity: 0.3;
+}
+
+.brand-name {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: 15px;
+}
+
+.brand-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 1px;
+}
+
+.nav {
+  flex: 1;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-3);
+  padding: 16px 12px 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  color: var(--text-1);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+}
+
+.nav-item:hover {
+  background: var(--bg-2);
+  color: var(--text-0);
+}
+
+.nav-item.active {
+  background: var(--bg-2);
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+.nav-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* === MAIN === */
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  height: var(--header-h);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.topbar-title {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.topbar-title h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.topbar-title .breadcrumb {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.content {
+  padding: 32px;
+  flex: 1;
+  max-width: 1600px;
+  width: 100%;
+}
+
+/* ============================================
+   COMPONENTES
+============================================ */
+
+/* === Cards === */
+.card {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-0);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-title::before {
+  content: '';
+  width: 3px;
+  height: 14px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.card-body { padding: 20px; }
+.card-body.dense { padding: 0; }
+
+/* === Stats === */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 32px; height: 2px;
+  background: var(--accent);
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-0);
+  line-height: 1;
+}
+
+.stat-meta {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.stat-meta .delta-up { color: var(--success); }
+.stat-meta .delta-down { color: var(--danger); }
+
+/* === Buttons === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  color: var(--text-0);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover { background: var(--bg-3); border-color: var(--border-strong); }
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg-0);
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+
+.btn-ghost { background: transparent; }
+.btn-danger { background: transparent; color: var(--danger); border-color: transparent; }
+.btn-danger:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); }
+
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-icon { padding: 8px; }
+.btn-icon svg { width: 14px; height: 14px; }
+
+/* SVG padrão dentro de botões (não-icon) e alertas */
+.btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+.btn-sm svg { width: 12px; height: 12px; }
+.alert svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--info); margin-top: 1px; }
+.alert.warn svg { color: var(--accent); }
+.empty svg { width: 48px; height: 48px; }
+.table-empty svg { width: 32px; height: 32px; }
+
+/* === Form === */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.input, .select, .textarea {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 9px 12px;
+  color: var(--text-0);
+  font-size: 13px;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.input.mono, .num-input { font-family: var(--font-mono); }
+
+.textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a8699' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 16px;
+}
+.form-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.form-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.form-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 800px) {
+  .form-grid.cols-2, .form-grid.cols-3, .form-grid.cols-4 { grid-template-columns: 1fr; }
+}
+
+/* === Table === */
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead th {
+  background: var(--bg-2);
+  text-align: left;
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-2);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+tbody tr:hover { background: var(--bg-2); }
+tbody tr:last-child td { border-bottom: none; }
+
+td.num, th.num { text-align: right; font-family: var(--font-mono); }
+td.center, th.center { text-align: center; }
+
+.table-empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.table-empty svg { width: 32px; height: 32px; opacity: 0.4; margin-bottom: 12px; }
+
+/* === Badge === */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  background: var(--bg-3);
+  color: var(--text-1);
+}
+
+.badge.success { background: rgba(74, 222, 128, 0.1); color: var(--success); }
+.badge.warn { background: rgba(245, 165, 36, 0.12); color: var(--accent); }
+.badge.danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+.badge.info { background: rgba(96, 165, 250, 0.1); color: var(--info); }
+
+/* === Tabs === */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+}
+
+.tab:hover { color: var(--text-0); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* === Modal === */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+}
+
+.modal-backdrop.show { display: flex; }
+
+.modal {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 4px;
+}
+.modal-close:hover { color: var(--text-0); }
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* === Misc === */
+.row-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.toolbar-left, .toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-input {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 12px 8px 36px;
+  color: var(--text-0);
+  font-size: 13px;
+  width: 280px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237a8699' stroke-width='2'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  font-size: 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.alert.info { border-color: rgba(96, 165, 250, 0.3); background: rgba(96, 165, 250, 0.05); }
+.alert.warn { border-color: rgba(245, 165, 36, 0.3); background: rgba(245, 165, 36, 0.05); }
+
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 200;
+}
+
+.toast {
+  background: var(--bg-2);
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  box-shadow: var(--shadow-md);
+  min-width: 240px;
+  animation: slideIn 0.2s ease-out;
+}
+
+.toast.success { border-left-color: var(--success); }
+.toast.danger { border-left-color: var(--danger); }
+
+@keyframes slideIn {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* === Página Proposta === */
+.proposta-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+@media (max-width: 1200px) {
+  .proposta-layout { grid-template-columns: 1fr; }
+}
+
+.summary-card {
+  position: sticky;
+  top: calc(var(--header-h) + 32px);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.summary-row:last-child { border-bottom: none; }
+
+.summary-row .lbl { color: var(--text-2); font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.summary-row .val { font-family: var(--font-mono); font-weight: 600; }
+
+.summary-row.total {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-strong);
+}
+
+.summary-row.total .val {
+  font-size: 22px;
+  color: var(--accent);
+}
+
+/* === Hidden / Utility === */
+.hidden { display: none !important; }
+.text-muted { color: var(--text-2); }
+.text-mono { font-family: var(--font-mono); }
+.text-right { text-align: right; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+
+/* === Print === */
+@media print {
+  .sidebar, .topbar, .no-print { display: none !important; }
+  body { background: white; color: black; }
+  .app { grid-template-columns: 1fr; }
+  .main { display: block; }
+  .content { padding: 0; max-width: none; }
+  .card { border: 1px solid #ccc; background: white; box-shadow: none; }
+  .card-header, .card-body { background: white; }
+  * { color: black !important; background: white !important; border-color: #ccc !important; }
+  .badge { border: 1px solid #999; }
+}
+
+/* === Empty state === */
+.empty {
+  padding: 64px 24px;
+  text-align: center;
+}
+
+.empty svg {
+  width: 48px;
+  height: 48px;
+  color: var(--text-3);
+  margin-bottom: 16px;
+}
+
+.empty h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.empty p {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* === Documento (proposta impressa) === */
+.doc-page {
+  background: white;
+  color: #111;
+  padding: 48px;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-display);
+  box-shadow: var(--shadow-md);
+}
+
+.doc-page h1, .doc-page h2, .doc-page h3 { color: #111; }
+.doc-page table { color: #111; }
+.doc-page table thead th { background: #f3f4f6; color: #374151; }
+.doc-page table tbody td { border-color: #e5e7eb; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #111;
+  margin-bottom: 32px;
+}
+
+.doc-title { font-size: 22px; letter-spacing: -0.02em; }
+.doc-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #6b7280;
+  text-align: right;
+  line-height: 1.8;
+}
+
+.doc-section { margin-bottom: 28px; }
+.doc-section h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6b7280;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.doc-kv {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 24px;
+  font-size: 13px;
+}
+
+.doc-kv .lbl { color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.doc-kv .val { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <!-- Conteúdo é injetado pelo app.js abaixo -->
+
+  <script>
+// =====================================================
+// 🔧 CONFIGURAÇÃO DO FIREBASE
+// =====================================================
+// Para usar com Firebase (multi-usuário, dados na nuvem),
+// preencha o objeto abaixo com os dados do seu projeto.
+// Caso deixe vazio, o sistema usa localStorage (modo offline, só seu navegador).
+//
+// Como obter:
+//   1. Vá em https://console.firebase.google.com
+//   2. Crie um projeto
+//   3. Adicione um "App da Web" (ícone </>)
+//   4. Copie o objeto firebaseConfig e cole abaixo
+//
+// Veja o passo a passo completo no final do arquivo (comentário).
+// =====================================================
+
+window.firebaseConfig = {
+  apiKey:            "AIzaSyCQTs4ZN6amM5wxqq6RKmiISCrDAjsznp0",
+  authDomain:        "precificador-1a331.firebaseapp.com",
+  projectId:         "precificador-1a331",
+  storageBucket:     "precificador-1a331.firebasestorage.app",
+  messagingSenderId: "76318475699",
+  appId:             "1:76318475699:web:1c89b716e40e5e1df237c6"
+};
+
+// =====================================================
+// store.js — Persistência local + dados iniciais (seed)
+// =====================================================
+
+const STORAGE_KEY = 'precificador_v1';
+
+// -----------------------------
+// SEED — extraído da planilha base
+// -----------------------------
+const SEED = {
+  config: {
+    empresa: 'Sua Empresa Ltda.',
+    cnpj: '',
+    responsavel: '',
+    impostos: 0.1853,   // 18,53% (valor típico de licitação - ajustável)
+    margem: 0.30,       // margem padrão sugerida
+    dolar: 5.30
+  },
+
+  // Insumos / Produtos (Cad. Itens + Calc. m²/mm da planilha)
+  insumos: [
+    { id: 'i1',  categoria: 'Produto',  codigo: 'DESENG-Z',   descricao: 'Desengordurador Z',                              unidade: 'L',  preco: 14.625,   rendimento: 0.171 },
+    { id: 'i2',  categoria: 'Produto',  codigo: 'DESENG-AUTO',descricao: 'Desengraxante Automotivo',                       unidade: 'L',  preco: 62.25,    rendimento: 0.171 },
+    { id: 'i3',  categoria: 'Produto',  codigo: 'FILME-120',  descricao: 'Filme Compressão 120mm x 40m',                   unidade: 'UN', preco: 229.00,   rendimento: 0.278 },
+    { id: 'i4',  categoria: 'Produto',  codigo: 'TW-2',       descricao: 'THERMO-WRAP 2" X 30\' (TFWMT-LFK-160-2S)',       unidade: 'CJ', preco: 38146.46, rendimento: 0.204 },
+    { id: 'i5',  categoria: 'Produto',  codigo: 'TW-4',       descricao: 'THERMO-WRAP 4" X 60\' (TFWMT-LFK-160-4S)',       unidade: 'CJ', preco: 38146.46, rendimento: 0.204 },
+    { id: 'i6',  categoria: 'Produto',  codigo: 'TW-6',       descricao: 'THERMO-WRAP 6" X 80\' (TFWMT-LFK-160-6S)',       unidade: 'CJ', preco: 38146.46, rendimento: 0.204 },
+    { id: 'i7',  categoria: 'Produto',  codigo: 'MX-9182-02', descricao: 'MAXCOMP 9182 02 (50mm x 20m)',                   unidade: 'CJ', preco: 7003.28,  rendimento: 0.45  },
+    { id: 'i8',  categoria: 'Produto',  codigo: 'MX-9182-05', descricao: 'MAXCOMP 9182 05 (130mm x 20m)',                  unidade: 'CJ', preco: 7794.68,  rendimento: 1.17  },
+    { id: 'i9',  categoria: 'Produto',  codigo: 'MX-9182-08', descricao: 'MAXCOMP 9182 08 (200mm x 20m)',                  unidade: 'CJ', preco: 8000.00,  rendimento: 1.80  },
+    { id: 'i10', categoria: 'Produto',  codigo: 'SEGURO',     descricao: 'Valor do Seguro',                                unidade: 'UN', preco: 20.00,    rendimento: 1.00  },
+    { id: 'i11', categoria: 'Vedação',  codigo: 'TINTA-UV',   descricao: 'Tinta Proteção UV',                              unidade: 'L',  preco: 271.00,   rendimento: 0.137 },
+    { id: 'i12', categoria: 'Vedação',  codigo: 'CINTA-23',   descricao: 'Cinta 23 mm',                                    unidade: 'UN', preco: 294.00,   rendimento: 0.40  },
+    { id: 'i13', categoria: 'Vedação',  codigo: 'PW-CERAM',   descricao: 'PW Ceramcoat Pasta Kit 1 Kg',                    unidade: 'UN', preco: 532.96,   rendimento: 0.022 },
+    { id: 'i14', categoria: 'Vedação',  codigo: 'JATO-ABR',   descricao: 'Jateamento - Abrasivo Garnet',                   unidade: 'KG', preco: 4.00,     rendimento: 15.56 },
+    { id: 'i15', categoria: 'Vedação',  codigo: 'CINTA-11',   descricao: 'Cinta 11 mm',                                    unidade: 'UN', preco: 226.89,   rendimento: 0.40  },
+    { id: 'i16', categoria: 'Vedação',  codigo: 'MM-OL',      descricao: 'MultiMetall OL Kit 1 Kg',                        unidade: 'KG', preco: 20390.25, rendimento: 1.00  },
+    { id: 'i17', categoria: 'Vedação',  codigo: 'MM-UW',      descricao: 'MultiMetall UW Kit 1 Kg',                        unidade: 'KG', preco: 18687.83, rendimento: 1.00  },
+    { id: 'i18', categoria: 'Vedação',  codigo: 'MM-SS',      descricao: 'MultiMetall SS-Aço Kit 1 Kg',                    unidade: 'KG', preco: 6378.40,  rendimento: 1.00  },
+    { id: 'i19', categoria: 'Anti-Chama', codigo: 'PFP',      descricao: 'Passive Fireproof Protection',                   unidade: 'M2', preco: 5931.24,  rendimento: 1.00  },
+    { id: 'i20', categoria: 'Anti-Chama', codigo: 'PIB',      descricao: 'Protective Insulating Barrier',                  unidade: 'M2', preco: 19744.38, rendimento: 1.00  }
+  ],
+
+  // Mão de obra (Cad. Mao de Obra)
+  maoObra: [
+    { id: 'm1', tipo: 'Líder',                descricao: 'Líder de equipe',                       diaria: 1600.00, modalidade: 'Onshore' },
+    { id: 'm2', tipo: 'Técnico Assistente',   descricao: 'Técnico Assistente',                    diaria: 1300.00, modalidade: 'Onshore' },
+    { id: 'm3', tipo: 'Técnico Delineador',   descricao: 'Técnico Delineador',                    diaria: 1450.00, modalidade: 'Onshore' },
+    { id: 'm4', tipo: 'Engenheiro',           descricao: 'Engenheiro responsável técnico',        diaria: 2200.00, modalidade: 'Onshore' },
+    { id: 'm5', tipo: 'Irata N1',             descricao: 'Técnico Irata Nível 1 - Offshore',      diaria: 1981.00, modalidade: 'Offshore' },
+    { id: 'm6', tipo: 'Irata N2',             descricao: 'Técnico Irata Nível 2 - Offshore',      diaria: 2172.00, modalidade: 'Offshore' },
+    { id: 'm7', tipo: 'Irata N3',             descricao: 'Técnico Irata Nível 3 - Offshore',      diaria: 2494.25, modalidade: 'Offshore' }
+  ],
+
+  propostas: [],
+
+  // Tipos de reparo padrão (do "Memorial de Cálculo")
+  tiposReparo: [
+    { id: 't1', nome: 'Furo / Pitting',            descricao: 'Reparo em furos ou pittings em tubulações' },
+    { id: 't2', nome: 'Vazamento',                 descricao: 'Contenção de vazamento'                    },
+    { id: 't3', nome: 'Reforço estrutural',        descricao: 'Reforço estrutural - material compósito'   },
+    { id: 't4', nome: 'Recomposição de parede',    descricao: 'Recomposição de parede / perda de espessura' },
+    { id: 't5', nome: 'PPCI / Anti-chamas',        descricao: 'Proteção passiva contra chamas'            }
+  ]
+};
+
+// =====================================================
+// FIREBASE — Auth + Firestore (substitui localStorage quando configurado)
+// =====================================================
+// Configurar `firebaseConfig` no início da inicialização (variável global no HTML).
+
+const FB = {
+  app: null,
+  auth: null,
+  db: null,
+  user: null,
+  userDoc: null,
+  unsubscribers: [],
+
+  // Matriz de permissões por papel
+  permissions: {
+    admin:        { canEditInsumos: true,  canEditMO: true,  canCreateProposta: true,  canEditProposta: true,  canDeleteProposta: true,  canEditConfig: true,  canManageUsers: true,  canChangeMarginTax: true  },
+    comercial:    { canEditInsumos: false, canEditMO: false, canCreateProposta: true,  canEditProposta: true,  canDeleteProposta: true,  canEditConfig: false, canManageUsers: false, canChangeMarginTax: false },
+    financeiro:   { canEditInsumos: false, canEditMO: false, canCreateProposta: false, canEditProposta: true,  canDeleteProposta: false, canEditConfig: true,  canManageUsers: false, canChangeMarginTax: true  },
+    engenharia:   { canEditInsumos: true,  canEditMO: true,  canCreateProposta: false, canEditProposta: true,  canDeleteProposta: false, canEditConfig: false, canManageUsers: false, canChangeMarginTax: false },
+    visualizador: { canEditInsumos: false, canEditMO: false, canCreateProposta: false, canEditProposta: false, canDeleteProposta: false, canEditConfig: false, canManageUsers: false, canChangeMarginTax: false }
+  },
+
+  ROLES: ['admin', 'comercial', 'financeiro', 'engenharia', 'visualizador'],
+  ROLE_LABELS: {
+    admin:        'Admin',
+    comercial:    'Comercial',
+    financeiro:   'Financeiro',
+    engenharia:   'Engenharia',
+    visualizador: 'Visualizador'
+  },
+
+  can(perm) {
+    if (!FB.userDoc) return false;
+    if (!FB.userDoc.active) return false;
+    const p = FB.permissions[FB.userDoc.role];
+    return p ? !!p[perm] : false;
+  },
+
+  role() { return FB.userDoc?.role || null; },
+  isLoggedIn() { return !!FB.user && !!FB.userDoc; },
+  isActive()   { return FB.isLoggedIn() && FB.userDoc.active; },
+
+  async init(config, onAuthChange) {
+    FB._onAuthChange = onAuthChange;
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+    const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } =
+      await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+    const fs = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+
+    FB.app = initializeApp(config);
+    FB.auth = getAuth(FB.app);
+    FB.db = fs.getFirestore(FB.app);
+    FB._fns = { GoogleAuthProvider, signInWithPopup, signOut, ...fs };
+
+    return new Promise((resolve) => {
+      onAuthStateChanged(FB.auth, async (user) => {
+        FB.user = user;
+        if (user) {
+          try {
+            await FB._loadOrCreateUserDoc(user);
+          } catch (e) {
+            console.error('Erro ao carregar perfil do usuário:', e);
+            FB.userDoc = null;
+            FB._lastError = e.message;
+          }
+        } else {
+          FB.userDoc = null;
+        }
+        if (FB._onAuthChange) FB._onAuthChange();
+        resolve();
+      });
+    });
+  },
+
+  async _loadOrCreateUserDoc(user) {
+    const { doc, getDoc, setDoc } = FB._fns;
+    const ref = doc(FB.db, 'users', user.uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      FB.userDoc = snap.data();
+      return;
+    }
+
+    // Detecta primeiro acesso via doc /meta/bootstrap
+    const metaRef = doc(FB.db, 'meta', 'bootstrap');
+    let isFirst = false;
+    try {
+      const metaSnap = await getDoc(metaRef);
+      isFirst = !metaSnap.exists();
+    } catch (e) {
+      console.warn('Não consegui ler meta/bootstrap, assumindo que não é primeiro acesso:', e);
+      isFirst = false;
+    }
+
+    FB.userDoc = {
+      email: user.email,
+      displayName: user.displayName || user.email,
+      photoURL: user.photoURL || '',
+      role: isFirst ? 'admin' : 'visualizador',
+      active: isFirst,
+      createdAt: new Date().toISOString()
+    };
+
+    // 1) Cria PRIMEIRO o doc do usuário — esse é o passo crítico
+    try {
+      await setDoc(ref, FB.userDoc);
+    } catch (e) {
+      console.error('Falha ao criar doc do usuário:', e);
+      throw new Error('Não foi possível criar seu perfil. Verifique as regras do Firestore.');
+    }
+
+    // 2) Se é primeiro acesso, marca bootstrap e dispara seed (em background, não bloqueia o login)
+    if (isFirst) {
+      // marca bootstrap — se falhar, não impede login
+      try {
+        await setDoc(metaRef, {
+          initializedBy: user.uid,
+          initializedAt: new Date().toISOString()
+        });
+      } catch (e) {
+        console.warn('Não consegui marcar bootstrap:', e);
+      }
+
+      // Seed em background — se falhar, não impede o login.
+      // Aguarda 1s para garantir que o doc users/{uid} se propagou
+      setTimeout(() => {
+        FB.seedIfEmpty().then(() => {
+          console.log('Seed concluído');
+        }).catch(e => {
+          console.error('Falha no seed (não-crítico, pode cadastrar manualmente):', e);
+        });
+      }, 1000);
+    }
+  },
+
+  async signInGoogle() {
+    const { GoogleAuthProvider, signInWithPopup } = FB._fns;
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(FB.auth, provider);
+  },
+
+  async signOut() {
+    const { signOut } = FB._fns;
+    FB.unsubscribers.forEach(u => u && u());
+    FB.unsubscribers = [];
+    await signOut(FB.auth);
+  },
+
+  async syncAll(onUpdate) {
+    const { collection, onSnapshot, doc } = FB._fns;
+    FB.unsubscribers.forEach(u => u && u());
+    FB.unsubscribers = [];
+
+    FB.unsubscribers.push(
+      onSnapshot(collection(FB.db, 'catalogo_insumos'), (snap) => {
+        Store.state.insumos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        onUpdate?.('insumos');
+      })
+    );
+    FB.unsubscribers.push(
+      onSnapshot(collection(FB.db, 'catalogo_maoObra'), (snap) => {
+        Store.state.maoObra = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        onUpdate?.('maoObra');
+      })
+    );
+    FB.unsubscribers.push(
+      onSnapshot(collection(FB.db, 'propostas'), (snap) => {
+        Store.state.propostas = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (b.criadoEm || '').localeCompare(a.criadoEm || ''));
+        onUpdate?.('propostas');
+      })
+    );
+    FB.unsubscribers.push(
+      onSnapshot(doc(FB.db, 'config', 'empresa'), (snap) => {
+        if (snap.exists()) {
+          Store.state.config = { ...Store.state.config, ...snap.data() };
+        }
+        onUpdate?.('config');
+      })
+    );
+    FB.unsubscribers.push(
+      onSnapshot(collection(FB.db, 'licitacoes'), (snap) => {
+        Store.state.licitacoes = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (b.criadoEm || '').localeCompare(a.criadoEm || ''));
+        onUpdate?.('licitacoes');
+      })
+    );
+  },
+
+  async setLicitacao(data) {
+    const { doc, setDoc } = FB._fns;
+    const id = data.id || ('l' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+    data.atualizadoEm = new Date().toISOString();
+    if (FB.user) {
+      data.criadoPor = data.criadoPor || FB.user.uid;
+      data.criadoPorNome = data.criadoPorNome || FB.userDoc?.displayName;
+      data.atualizadoPor = FB.user.uid;
+    }
+    const { id: _id, ...payload } = data;
+    await setDoc(doc(FB.db, 'licitacoes', id), payload, { merge: true });
+    return id;
+  },
+  async delLicitacao(id) {
+    const { doc, deleteDoc } = FB._fns;
+    await deleteDoc(doc(FB.db, 'licitacoes', id));
+  },
+
+  async setInsumo(data) {
+    const { doc, setDoc } = FB._fns;
+    const id = data.id || ('i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+    const { id: _id, ...payload } = data;
+    await setDoc(doc(FB.db, 'catalogo_insumos', id), payload, { merge: true });
+    return id;
+  },
+  async delInsumo(id) {
+    const { doc, deleteDoc } = FB._fns;
+    await deleteDoc(doc(FB.db, 'catalogo_insumos', id));
+  },
+  async setMaoObra(data) {
+    const { doc, setDoc } = FB._fns;
+    const id = data.id || ('m' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+    const { id: _id, ...payload } = data;
+    await setDoc(doc(FB.db, 'catalogo_maoObra', id), payload, { merge: true });
+    return id;
+  },
+  async delMaoObra(id) {
+    const { doc, deleteDoc } = FB._fns;
+    await deleteDoc(doc(FB.db, 'catalogo_maoObra', id));
+  },
+  async setProposta(data) {
+    const { doc, setDoc, getDocs, collection } = FB._fns;
+    let id = data.id;
+    if (!id) {
+      id = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    }
+    if (!data.numero) {
+      const snap = await getDocs(collection(FB.db, 'propostas'));
+      data.numero = 'PROP-' + new Date().getFullYear() + '-' + String(snap.size + 1).padStart(4, '0');
+    }
+    data.criadoEm = data.criadoEm || new Date().toISOString();
+    if (FB.user) {
+      data.criadoPor = data.criadoPor || FB.user.uid;
+      data.criadoPorNome = data.criadoPorNome || FB.userDoc?.displayName;
+      data.atualizadoPor = FB.user.uid;
+    }
+    data.atualizadoEm = new Date().toISOString();
+    const { id: _id, ...payload } = data;
+    await setDoc(doc(FB.db, 'propostas', id), payload, { merge: true });
+    return id;
+  },
+  async delProposta(id) {
+    const { doc, deleteDoc } = FB._fns;
+    await deleteDoc(doc(FB.db, 'propostas', id));
+  },
+  async setConfig(patch) {
+    const { doc, setDoc } = FB._fns;
+    await setDoc(doc(FB.db, 'config', 'empresa'), patch, { merge: true });
+  },
+
+  async listUsers() {
+    const { collection, getDocs } = FB._fns;
+    const snap = await getDocs(collection(FB.db, 'users'));
+    return snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+  },
+  async updateUserRole(uid, patch) {
+    const { doc, setDoc } = FB._fns;
+    await setDoc(doc(FB.db, 'users', uid), patch, { merge: true });
+  },
+
+  async seedIfEmpty() {
+    const { collection, getDocs, doc, setDoc } = FB._fns;
+    const ins = await getDocs(collection(FB.db, 'catalogo_insumos'));
+    if (ins.empty) {
+      for (const i of SEED.insumos) {
+        const { id, ...rest } = i;
+        await setDoc(doc(FB.db, 'catalogo_insumos', id), rest);
+      }
+    }
+    const mo = await getDocs(collection(FB.db, 'catalogo_maoObra'));
+    if (mo.empty) {
+      for (const m of SEED.maoObra) {
+        const { id, ...rest } = m;
+        await setDoc(doc(FB.db, 'catalogo_maoObra', id), rest);
+      }
+    }
+    const cfg = await getDocs(collection(FB.db, 'config'));
+    if (cfg.empty) {
+      await setDoc(doc(FB.db, 'config', 'empresa'), SEED.config);
+    }
+  }
+};
+
+window.FB = FB;
+
+// -----------------------------
+// API do store — usa Firebase quando autenticado, localStorage caso contrário
+// -----------------------------
+const Store = {
+  state: null,
+  mode: 'local',   // 'local' ou 'firebase'
+
+  load() {
+    if (!this.state) {
+      this.state = {
+        config: { ...SEED.config },
+        insumos: [],
+        maoObra: [],
+        propostas: [],
+        licitacoes: [],
+        tiposReparo: SEED.tiposReparo
+      };
+    }
+    // Em modo local, carrega do localStorage. Em firebase, espera o snapshot.
+    if (this.mode === 'local') {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const stored = JSON.parse(raw);
+          this.state = {
+            config:      stored.config      || SEED.config,
+            insumos:     stored.insumos     || JSON.parse(JSON.stringify(SEED.insumos)),
+            maoObra:     stored.maoObra     || JSON.parse(JSON.stringify(SEED.maoObra)),
+            propostas:   stored.propostas   || [],
+            licitacoes:  stored.licitacoes  || [],
+            tiposReparo: stored.tiposReparo || SEED.tiposReparo
+          };
+        } else {
+          // primeira vez no modo local: aplica seed completo
+          this.state = JSON.parse(JSON.stringify(SEED));
+          this.state.licitacoes = [];
+          this.save();
+        }
+      } catch (e) {
+        console.error('Erro ao carregar', e);
+        this.state = JSON.parse(JSON.stringify(SEED));
+        this.state.licitacoes = [];
+      }
+    }
+    return this.state;
+  },
+
+  save() {
+    if (this.mode === 'local') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
+    }
+    // em modo firebase, cada operação salva direto via FB
+  },
+
+  reset() {
+    this.state = JSON.parse(JSON.stringify(SEED));
+    if (this.mode === 'local') this.save();
+  },
+
+  export() {
+    return JSON.stringify(this.state, null, 2);
+  },
+
+  import(json) {
+    try {
+      const data = JSON.parse(json);
+      if (!data.insumos || !data.maoObra) throw new Error('Formato inválido');
+      this.state = data;
+      if (this.mode === 'local') this.save();
+      return true;
+    } catch (e) {
+      console.error(e); return false;
+    }
+  },
+
+  newId(prefix='x') {
+    return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  },
+
+  // ----- Insumos -----
+  insumos: {
+    list() { return Store.state.insumos; },
+    get(id) { return Store.state.insumos.find(i => i.id === id); },
+    add(data) {
+      if (Store.mode === 'firebase') {
+        FB.setInsumo(data).catch(e => toast('Erro ao salvar: ' + e.message, 'danger'));
+        return data;
+      }
+      data.id = Store.newId('i');
+      Store.state.insumos.push(data);
+      Store.save();
+      return data;
+    },
+    update(id, patch) {
+      if (Store.mode === 'firebase') {
+        FB.setInsumo({ id, ...patch }).catch(e => toast('Erro: ' + e.message, 'danger'));
+        return;
+      }
+      const i = Store.state.insumos.findIndex(x => x.id === id);
+      if (i >= 0) {
+        Store.state.insumos[i] = { ...Store.state.insumos[i], ...patch };
+        Store.save();
+      }
+    },
+    remove(id) {
+      if (Store.mode === 'firebase') {
+        FB.delInsumo(id).catch(e => toast('Erro: ' + e.message, 'danger'));
+        return;
+      }
+      Store.state.insumos = Store.state.insumos.filter(x => x.id !== id);
+      Store.save();
+    }
+  },
+
+  // ----- Mão de obra -----
+  maoObra: {
+    list() { return Store.state.maoObra; },
+    get(id) { return Store.state.maoObra.find(i => i.id === id); },
+    add(data) {
+      if (Store.mode === 'firebase') {
+        FB.setMaoObra(data).catch(e => toast('Erro: ' + e.message, 'danger'));
+        return data;
+      }
+      data.id = Store.newId('m');
+      Store.state.maoObra.push(data);
+      Store.save();
+      return data;
+    },
+    update(id, patch) {
+      if (Store.mode === 'firebase') {
+        FB.setMaoObra({ id, ...patch }).catch(e => toast('Erro: ' + e.message, 'danger'));
+        return;
+      }
+      const i = Store.state.maoObra.findIndex(x => x.id === id);
+      if (i >= 0) {
+        Store.state.maoObra[i] = { ...Store.state.maoObra[i], ...patch };
+        Store.save();
+      }
+    },
+    remove(id) {
+      if (Store.mode === 'firebase') {
+        FB.delMaoObra(id).catch(e => toast('Erro: ' + e.message, 'danger'));
+        return;
+      }
+      Store.state.maoObra = Store.state.maoObra.filter(x => x.id !== id);
+      Store.save();
+    }
+  },
+
+  // ----- Propostas -----
+  propostas: {
+    list() { return Store.state.propostas; },
+    get(id) { return Store.state.propostas.find(p => p.id === id); },
+    add(data) {
+      if (Store.mode === 'firebase') {
+        // gera id local pra retornar de imediato; FB vai sincronizar via snapshot
+        data.id = data.id || Store.newId('p');
+        data.numero = data.numero || ('PROP-' + new Date().getFullYear() + '-' + String(Store.state.propostas.length + 1).padStart(4, '0'));
+        data.criadoEm = data.criadoEm || new Date().toISOString();
+        data.status = data.status || 'rascunho';
+        FB.setProposta(data).catch(e => toast('Erro: ' + e.message, 'danger'));
+        // adiciona localmente para o usuário ver imediatamente (será substituído quando o snapshot chegar)
+        Store.state.propostas.unshift(data);
+        return data;
+      }
+      data.id = Store.newId('p');
+      data.numero = data.numero || ('PROP-' + new Date().getFullYear() + '-' + String(Store.state.propostas.length + 1).padStart(4, '0'));
+      data.criadoEm = new Date().toISOString();
+      data.status = data.status || 'rascunho';
+      Store.state.propostas.unshift(data);
+      Store.save();
+      return data;
+    },
+    update(id, patch) {
+      if (Store.mode === 'firebase') {
+        FB.setProposta({ id, ...patch }).catch(e => toast('Erro: ' + e.message, 'danger'));
+        // atualização otimista local
+        const i = Store.state.propostas.findIndex(x => x.id === id);
+        if (i >= 0) Store.state.propostas[i] = { ...Store.state.propostas[i], ...patch };
+        return Store.state.propostas[i];
+      }
+      const i = Store.state.propostas.findIndex(x => x.id === id);
+      if (i >= 0) {
+        Store.state.propostas[i] = { ...Store.state.propostas[i], ...patch, atualizadoEm: new Date().toISOString() };
+        Store.save();
+        return Store.state.propostas[i];
+      }
+    },
+    remove(id) {
+      if (Store.mode === 'firebase') {
+        FB.delProposta(id).catch(e => toast('Erro: ' + e.message, 'danger'));
+        Store.state.propostas = Store.state.propostas.filter(x => x.id !== id);
+        return;
+      }
+      Store.state.propostas = Store.state.propostas.filter(x => x.id !== id);
+      Store.save();
+    }
+  },
+
+  setConfig(patch) {
+    if (Store.mode === 'firebase') {
+      FB.setConfig(patch).catch(e => toast('Erro: ' + e.message, 'danger'));
+      Store.state.config = { ...Store.state.config, ...patch };
+      return;
+    }
+    Store.state.config = { ...Store.state.config, ...patch };
+    Store.save();
+  },
+
+  // ----- Licitações -----
+  licitacoes: {
+    list() { return Store.state.licitacoes || []; },
+    get(id) { return (Store.state.licitacoes || []).find(l => l.id === id); },
+    add(data) {
+      if (!Store.state.licitacoes) Store.state.licitacoes = [];
+      data.id = data.id || Store.newId('l');
+      data.criadoEm = data.criadoEm || new Date().toISOString();
+      data.status = data.status || 'em_analise';
+      data.eventos = data.eventos || [{
+        data: new Date().toISOString(),
+        tipo: 'criacao',
+        descricao: 'Licitação criada'
+      }];
+      if (Store.mode === 'firebase') {
+        FB.setLicitacao(data).catch(e => toast('Erro: ' + e.message, 'danger'));
+      }
+      Store.state.licitacoes.unshift(data);
+      if (Store.mode === 'local') Store.save();
+      return data;
+    },
+    update(id, patch) {
+      if (!Store.state.licitacoes) Store.state.licitacoes = [];
+      const i = Store.state.licitacoes.findIndex(x => x.id === id);
+      if (i < 0) return;
+      const atualizada = { ...Store.state.licitacoes[i], ...patch, atualizadoEm: new Date().toISOString() };
+      Store.state.licitacoes[i] = atualizada;
+      if (Store.mode === 'firebase') {
+        FB.setLicitacao(atualizada).catch(e => toast('Erro: ' + e.message, 'danger'));
+      } else {
+        Store.save();
+      }
+      return atualizada;
+    },
+    remove(id) {
+      if (!Store.state.licitacoes) return;
+      if (Store.mode === 'firebase') {
+        FB.delLicitacao(id).catch(e => toast('Erro: ' + e.message, 'danger'));
+      }
+      Store.state.licitacoes = Store.state.licitacoes.filter(x => x.id !== id);
+      if (Store.mode === 'local') Store.save();
+    },
+    addEvento(id, tipo, descricao) {
+      const lic = Store.licitacoes.get(id);
+      if (!lic) return;
+      const eventos = [...(lic.eventos || []), {
+        data: new Date().toISOString(),
+        tipo, descricao,
+        usuarioId: FB.user?.uid || null,
+        usuarioNome: FB.userDoc?.displayName || null
+      }];
+      Store.licitacoes.update(id, { eventos });
+    }
+  }
+};
+
+window.Store = Store;
+
+// ============================================
+// utils.js — helpers, format, ícones, toasts
+// ============================================
+
+const fmtBRL = v => (Number(v) || 0).toLocaleString('pt-BR', {
+  style: 'currency', currency: 'BRL', minimumFractionDigits: 2
+});
+
+const fmtNum = (v, d = 2) => (Number(v) || 0).toLocaleString('pt-BR', {
+  minimumFractionDigits: d, maximumFractionDigits: d
+});
+
+const fmtDate = iso => {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR');
+};
+
+const fmtDateTime = iso => {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+};
+
+const fmtMoney = fmtBRL;  // alias para compatibilidade
+
+const parseNum = v => {
+  if (typeof v === 'number') return v;
+  if (v === null || v === undefined || v === '') return 0;
+  let s = String(v).trim();
+  // Detecta o formato:
+  // - "1.234,56" (BR) → tem vírgula como decimal
+  // - "1234.56"  (EN) → tem ponto como decimal e nenhuma vírgula
+  // - "1,234"    (EN) → vírgula como separador de milhar (raro no input numérico, mas possível)
+  if (s.indexOf(',') >= 0) {
+    // formato BR: remove pontos (milhares), troca vírgula por ponto
+    s = s.replace(/\./g, '').replace(',', '.');
+  }
+  // se só tem ponto, mantém como está (formato EN, padrão de input type=number)
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+};
+
+// ----------------------------------------------------
+// Ícones — feather/lucide style (stroke 2)
+// ----------------------------------------------------
+const Icons = {
+  dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+  package:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+  users:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  file:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  settings:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  plus:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  edit:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  close:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  download:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  upload:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+  printer:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
+  copy:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  inbox:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
+  trending:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+  calculator:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="12" y1="10" x2="14" y2="10"/><line x1="16" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="12" y1="14" x2="14" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="12" y1="18" x2="14" y2="18"/><line x1="16" y1="14" x2="16" y2="18"/></svg>',
+  briefcase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+  save:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
+  arrowLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>',
+  info:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+};
+
+// ----------------------------------------------------
+// Toast
+// ----------------------------------------------------
+function toast(msg, type='success') {
+  let container = document.querySelector('.toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(20px)';
+    el.style.transition = 'all 0.2s';
+    setTimeout(() => el.remove(), 200);
+  }, 2600);
+}
+
+// ----------------------------------------------------
+// Modal genérico
+// ----------------------------------------------------
+function openModal({ title, body, onSave, saveLabel = 'Salvar', size = '' }) {
+  const backdrop = document.getElementById('modal-backdrop');
+  backdrop.innerHTML = `
+    <div class="modal ${size}">
+      <div class="modal-header">
+        <div class="modal-title">${title}</div>
+        <button class="modal-close" data-close>${Icons.close}</button>
+      </div>
+      <div class="modal-body">${body}</div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-close>Cancelar</button>
+        <button class="btn btn-primary" data-save>${saveLabel}</button>
+      </div>
+    </div>`;
+  backdrop.classList.add('show');
+
+  const close = () => backdrop.classList.remove('show');
+  backdrop.querySelectorAll('[data-close]').forEach(b => b.onclick = close);
+  backdrop.querySelector('[data-save]').onclick = () => {
+    const ok = onSave?.(backdrop.querySelector('.modal-body'));
+    if (ok !== false) close();
+  };
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+}
+
+function confirmDialog(msg, onConfirm) {
+  openModal({
+    title: 'Confirmar',
+    body: `<p style="font-size:14px;color:var(--text-1)">${msg}</p>`,
+    saveLabel: 'Confirmar',
+    onSave: () => { onConfirm?.(); }
+  });
+}
+
+// ----------------------------------------------------
+// Download de arquivo
+// ----------------------------------------------------
+function downloadFile(filename, content, type='application/json') {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+window.fmtBRL = fmtBRL;
+window.fmtNum = fmtNum;
+window.fmtDate = fmtDate;
+window.parseNum = parseNum;
+window.Icons = Icons;
+window.toast = toast;
+window.openModal = openModal;
+window.confirmDialog = confirmDialog;
+window.downloadFile = downloadFile;
+
+// ============================================
+// views/dashboard.js
+// ============================================
+function viewDashboard() {
+  const propostas = Store.propostas.list();
+  const total = propostas.reduce((s, p) => s + (p.total || 0), 0);
+  const aprov = propostas.filter(p => p.status === 'aprovada');
+  const totalAprov = aprov.reduce((s, p) => s + (p.total || 0), 0);
+  const pendentes = propostas.filter(p => p.status === 'enviada' || p.status === 'rascunho').length;
+
+  const recentes = propostas.slice(0, 6);
+
+  return `
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-label">Propostas</div>
+        <div class="stat-value">${propostas.length}</div>
+        <div class="stat-meta">${pendentes} em aberto</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Valor total movimentado</div>
+        <div class="stat-value">${fmtBRL(total)}</div>
+        <div class="stat-meta">${propostas.length} propostas geradas</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Aprovadas</div>
+        <div class="stat-value">${aprov.length}</div>
+        <div class="stat-meta">${fmtBRL(totalAprov)} fechados</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Cadastros ativos</div>
+        <div class="stat-value">${Store.insumos.list().length + Store.maoObra.list().length}</div>
+        <div class="stat-meta">${Store.insumos.list().length} insumos · ${Store.maoObra.list().length} m.o.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Propostas recentes</div>
+        <button class="btn btn-primary btn-sm" data-action="nova-proposta">
+          ${Icons.plus} Nova proposta
+        </button>
+      </div>
+      <div class="card-body dense">
+        ${recentes.length === 0 ? `
+          <div class="empty">
+            ${Icons.inbox}
+            <h3>Nenhuma proposta ainda</h3>
+            <p>Crie sua primeira proposta para começar</p>
+            <button class="btn btn-primary" data-action="nova-proposta">${Icons.plus} Nova proposta</button>
+          </div>
+        ` : `
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Cliente</th>
+                  <th>Status</th>
+                  <th>Criado em</th>
+                  <th class="num">Valor</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${recentes.map(p => `
+                  <tr>
+                    <td class="text-mono">${p.numero}</td>
+                    <td>${p.cliente?.nome || '<span class="text-muted">— sem cliente —</span>'}</td>
+                    <td>${statusBadge(p.status)}</td>
+                    <td class="text-muted">${fmtDate(p.criadoEm)}</td>
+                    <td class="num">${fmtBRL(p.total || 0)}</td>
+                    <td><button class="btn btn-sm btn-ghost" data-action="abrir-proposta" data-id="${p.id}">Abrir</button></td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function statusBadge(status) {
+  const map = {
+    rascunho: { cls: '',        txt: 'Rascunho' },
+    enviada:  { cls: 'info',    txt: 'Enviada'  },
+    aprovada: { cls: 'success', txt: 'Aprovada' },
+    perdida:  { cls: 'danger',  txt: 'Perdida'  }
+  };
+  const s = map[status] || map.rascunho;
+  return `<span class="badge ${s.cls}">${s.txt}</span>`;
+}
+
+window.viewDashboard = viewDashboard;
+window.statusBadge = statusBadge;
+
+// ============================================
+// views/insumos.js
+// ============================================
+let _insumosFiltro = '';
+
+function viewInsumos() {
+  const items = Store.insumos.list().filter(i => {
+    if (!_insumosFiltro) return true;
+    const f = _insumosFiltro.toLowerCase();
+    return (i.descricao || '').toLowerCase().includes(f)
+        || (i.codigo || '').toLowerCase().includes(f)
+        || (i.categoria || '').toLowerCase().includes(f);
+  });
+
+  return `
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <input type="text" class="search-input" placeholder="Buscar por descrição, código ou categoria..." id="insumos-search" value="${_insumosFiltro}"/>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn btn-ghost btn-sm" data-action="export-insumos">${Icons.download} Exportar</button>
+        <button class="btn btn-primary btn-sm" data-action="novo-insumo">${Icons.plus} Novo insumo</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body dense">
+        ${items.length === 0 ? `
+          <div class="empty">
+            ${Icons.package}
+            <h3>Nenhum insumo cadastrado</h3>
+            <p>Adicione produtos e materiais que entram no cálculo de propostas</p>
+          </div>
+        ` : `
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Descrição</th>
+                  <th>Categoria</th>
+                  <th class="center">Unid.</th>
+                  <th class="num">Preço unitário</th>
+                  <th class="num">Rendimento</th>
+                  <th class="num">Custo/m²·mm</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.map(i => {
+                  const custoM2 = (i.preco || 0) * (i.rendimento || 0);
+                  return `
+                  <tr>
+                    <td class="text-mono">${i.codigo || '—'}</td>
+                    <td>${i.descricao}</td>
+                    <td><span class="badge">${i.categoria || '—'}</span></td>
+                    <td class="center text-muted">${i.unidade || '—'}</td>
+                    <td class="num">${fmtBRL(i.preco)}</td>
+                    <td class="num">${fmtNum(i.rendimento, 3)}</td>
+                    <td class="num">${fmtBRL(custoM2)}</td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="btn btn-icon btn-ghost btn-sm" data-action="editar-insumo" data-id="${i.id}">${Icons.edit}</button>
+                        <button class="btn btn-icon btn-danger btn-sm" data-action="excluir-insumo" data-id="${i.id}">${Icons.trash}</button>
+                      </div>
+                    </td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function bindInsumosView() {
+  const search = document.getElementById('insumos-search');
+  if (!search) return;
+  // mantém o foco e a posição do cursor entre filtros via debounce + re-render do router
+  let t;
+  search.addEventListener('input', (e) => {
+    _insumosFiltro = e.target.value;
+    clearTimeout(t);
+    t = setTimeout(() => {
+      const pos = e.target.selectionStart;
+      Router.render();
+      const newSearch = document.getElementById('insumos-search');
+      if (newSearch) { newSearch.focus(); newSearch.setSelectionRange(pos, pos); }
+    }, 120);
+  });
+}
+
+// ------- Form: novo/editar insumo -------
+function formInsumo(insumo) {
+  insumo = insumo || { categoria: 'Produto', unidade: 'UN', preco: 0, rendimento: 1 };
+  return `
+    <div class="form-grid cols-2">
+      <div class="field">
+        <label>Código</label>
+        <input class="input mono" name="codigo" value="${insumo.codigo || ''}" placeholder="ex.: TW-4"/>
+      </div>
+      <div class="field">
+        <label>Categoria</label>
+        <select class="select" name="categoria">
+          ${['Produto', 'Vedação', 'Anti-Chama', 'Consumível', 'Outros'].map(c =>
+            `<option ${insumo.categoria === c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field" style="grid-column: span 2">
+        <label>Descrição</label>
+        <input class="input" name="descricao" value="${insumo.descricao || ''}" placeholder="ex.: Filme de Compressão 4&quot; x 225"/>
+      </div>
+      <div class="field">
+        <label>Unidade</label>
+        <select class="select" name="unidade">
+          ${['UN', 'L', 'KG', 'M2', 'CJ', 'PC', 'M'].map(u =>
+            `<option ${insumo.unidade === u ? 'selected' : ''}>${u}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>Preço unitário (R$)</label>
+        <input class="input mono" type="number" step="0.01" name="preco" value="${insumo.preco || 0}"/>
+      </div>
+      <div class="field">
+        <label>Rendimento por m²/mm</label>
+        <input class="input mono" type="number" step="0.001" name="rendimento" value="${insumo.rendimento || 0}"/>
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
+        <div style="padding:9px 12px;background:var(--bg-2);border-radius:var(--radius);font-family:var(--font-mono);font-size:13px">
+          Custo/m²·mm: <span data-preview-custo style="color:var(--accent);font-weight:600">${fmtBRL((insumo.preco || 0) * (insumo.rendimento || 0))}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function openInsumoModal(id) {
+  const insumo = id ? Store.insumos.get(id) : null;
+  openModal({
+    title: id ? 'Editar insumo' : 'Novo insumo',
+    body: formInsumo(insumo),
+    saveLabel: id ? 'Salvar alterações' : 'Cadastrar',
+    onSave: (body) => {
+      const fd = new FormData();
+      body.querySelectorAll('[name]').forEach(el => fd.append(el.name, el.value));
+      const data = Object.fromEntries(fd.entries());
+      data.preco = parseNum(data.preco);
+      data.rendimento = parseNum(data.rendimento);
+      if (!data.descricao || data.descricao.trim() === '') {
+        toast('Descrição é obrigatória', 'danger');
+        return false;
+      }
+      if (id) {
+        Store.insumos.update(id, data);
+        toast('Insumo atualizado');
+      } else {
+        Store.insumos.add(data);
+        toast('Insumo cadastrado');
+      }
+      Router.render();
+    }
+  });
+
+  // live preview do custo/m²·mm
+  setTimeout(() => {
+    const body = document.querySelector('.modal-body');
+    if (!body) return;
+    const update = () => {
+      const p = parseNum(body.querySelector('[name=preco]').value);
+      const r = parseNum(body.querySelector('[name=rendimento]').value);
+      const span = body.querySelector('[data-preview-custo]');
+      if (span) span.textContent = fmtBRL(p * r);
+    };
+    body.querySelector('[name=preco]').oninput = update;
+    body.querySelector('[name=rendimento]').oninput = update;
+  }, 50);
+}
+
+window.viewInsumos = viewInsumos;
+window.bindInsumosView = bindInsumosView;
+window.openInsumoModal = openInsumoModal;
+
+// ============================================
+// views/mao_obra.js
+// ============================================
+function viewMaoObra() {
+  const items = Store.maoObra.list();
+
+  return `
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <h2 style="font-size:14px;color:var(--text-2);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.1em">
+          ${items.length} funções cadastradas
+        </h2>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn btn-primary btn-sm" data-action="novo-mo">${Icons.plus} Nova função</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body dense">
+        ${items.length === 0 ? `
+          <div class="empty">
+            ${Icons.users}
+            <h3>Nenhuma função cadastrada</h3>
+            <p>Adicione as funções/cargos que entram no cálculo das diárias</p>
+          </div>
+        ` : `
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tipo / Função</th>
+                  <th>Descrição</th>
+                  <th class="center">Modalidade</th>
+                  <th class="num">Valor da diária</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.map(m => `
+                  <tr>
+                    <td><strong>${m.tipo}</strong></td>
+                    <td class="text-muted">${m.descricao || '—'}</td>
+                    <td class="center">
+                      <span class="badge ${m.modalidade === 'Offshore' ? 'info' : ''}">${m.modalidade}</span>
+                    </td>
+                    <td class="num">${fmtBRL(m.diaria)}</td>
+                    <td>
+                      <div class="row-actions">
+                        <button class="btn btn-icon btn-ghost btn-sm" data-action="editar-mo" data-id="${m.id}">${Icons.edit}</button>
+                        <button class="btn btn-icon btn-danger btn-sm" data-action="excluir-mo" data-id="${m.id}">${Icons.trash}</button>
+                      </div>
+                    </td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function formMaoObra(mo) {
+  mo = mo || { tipo: '', modalidade: 'Onshore', diaria: 0 };
+  return `
+    <div class="form-grid cols-2">
+      <div class="field">
+        <label>Tipo / Função</label>
+        <input class="input" name="tipo" value="${mo.tipo || ''}" placeholder="ex.: Técnico Irata N2"/>
+      </div>
+      <div class="field">
+        <label>Modalidade</label>
+        <select class="select" name="modalidade">
+          <option ${mo.modalidade === 'Onshore' ? 'selected' : ''}>Onshore</option>
+          <option ${mo.modalidade === 'Offshore' ? 'selected' : ''}>Offshore</option>
+        </select>
+      </div>
+      <div class="field" style="grid-column: span 2">
+        <label>Descrição</label>
+        <input class="input" name="descricao" value="${mo.descricao || ''}" placeholder="opcional — detalhes da função"/>
+      </div>
+      <div class="field">
+        <label>Valor da diária (R$)</label>
+        <input class="input mono" type="number" step="0.01" name="diaria" value="${mo.diaria || 0}"/>
+      </div>
+    </div>
+  `;
+}
+
+function openMaoObraModal(id) {
+  const mo = id ? Store.maoObra.get(id) : null;
+  openModal({
+    title: id ? 'Editar função' : 'Nova função',
+    body: formMaoObra(mo),
+    saveLabel: id ? 'Salvar alterações' : 'Cadastrar',
+    onSave: (body) => {
+      const fd = new FormData();
+      body.querySelectorAll('[name]').forEach(el => fd.append(el.name, el.value));
+      const data = Object.fromEntries(fd.entries());
+      data.diaria = parseNum(data.diaria);
+      if (!data.tipo || data.tipo.trim() === '') { toast('Tipo é obrigatório', 'danger'); return false; }
+      if (id) {
+        Store.maoObra.update(id, data);
+        toast('Função atualizada');
+      } else {
+        Store.maoObra.add(data);
+        toast('Função cadastrada');
+      }
+      Router.render();
+    }
+  });
+}
+
+window.viewMaoObra = viewMaoObra;
+window.openMaoObraModal = openMaoObraModal;
+
+// ============================================
+// views/propostas.js
+// ============================================
+let _propostaFiltro = '';
+
+function viewPropostas() {
+  const items = Store.propostas.list().filter(p => {
+    if (!_propostaFiltro) return true;
+    const f = _propostaFiltro.toLowerCase();
+    return (p.numero || '').toLowerCase().includes(f)
+        || (p.cliente?.nome || '').toLowerCase().includes(f)
+        || (p.cliente?.cnpj || '').toLowerCase().includes(f);
+  });
+
+  return `
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <input type="text" class="search-input" placeholder="Buscar por número, cliente ou CNPJ..." id="prop-search" value="${_propostaFiltro}"/>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn btn-primary btn-sm" data-action="nova-proposta">${Icons.plus} Nova proposta</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body dense">
+        ${items.length === 0 ? `
+          <div class="empty">
+            ${Icons.file}
+            <h3>Nenhuma proposta encontrada</h3>
+            <p>${_propostaFiltro ? 'Tente outro termo de busca' : 'Crie sua primeira proposta para começar'}</p>
+            ${!_propostaFiltro ? `<button class="btn btn-primary" data-action="nova-proposta">${Icons.plus} Nova proposta</button>` : ''}
+          </div>
+        ` : `
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Cliente</th>
+                  <th>Status</th>
+                  <th>Criado em</th>
+                  <th class="num">Itens</th>
+                  <th class="num">Valor total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.map(p => `
+                  <tr style="cursor:pointer" data-action="abrir-proposta" data-id="${p.id}">
+                    <td class="text-mono">${p.numero}</td>
+                    <td>
+                      <strong>${p.cliente?.nome || '—'}</strong>
+                      ${p.cliente?.cnpj ? `<div class="text-muted text-mono" style="font-size:11px">${p.cliente.cnpj}</div>` : ''}
+                    </td>
+                    <td>${statusBadge(p.status)}</td>
+                    <td class="text-muted">${fmtDate(p.criadoEm)}</td>
+                    <td class="num text-muted">${(p.itens || []).length}</td>
+                    <td class="num"><strong>${fmtBRL(p.total || 0)}</strong></td>
+                    <td onclick="event.stopPropagation()">
+                      <div class="row-actions">
+                        <button class="btn btn-icon btn-ghost btn-sm" data-action="abrir-proposta" data-id="${p.id}" title="Abrir">${Icons.edit}</button>
+                        <button class="btn btn-icon btn-ghost btn-sm" data-action="duplicar-proposta" data-id="${p.id}" title="Duplicar">${Icons.copy}</button>
+                        <button class="btn btn-icon btn-danger btn-sm" data-action="excluir-proposta" data-id="${p.id}" title="Excluir">${Icons.trash}</button>
+                      </div>
+                    </td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function bindPropostasView() {
+  const search = document.getElementById('prop-search');
+  if (!search) return;
+  let t;
+  search.addEventListener('input', (e) => {
+    _propostaFiltro = e.target.value;
+    clearTimeout(t);
+    t = setTimeout(() => {
+      const pos = e.target.selectionStart;
+      Router.render();
+      const newSearch = document.getElementById('prop-search');
+      if (newSearch) { newSearch.focus(); newSearch.setSelectionRange(pos, pos); }
+    }, 120);
+  });
+}
+
+window.viewPropostas = viewPropostas;
+window.bindPropostasView = bindPropostasView;
+
+// ===========================================================
+// views/proposta_edit.js
+// Editor de proposta — dados do cliente, itens, cálculo, totais
+// ===========================================================
+
+let _propostaAtual = null;
+
+function carregarProposta(id) {
+  if (id) {
+    const p = Store.propostas.get(id);
+    if (p) {
+      _propostaAtual = JSON.parse(JSON.stringify(p));  // clone
+    } else {
+      _propostaAtual = propostaVazia();
+    }
+  } else {
+    _propostaAtual = propostaVazia();
+  }
+  return _propostaAtual;
+}
+
+function propostaVazia() {
+  return {
+    id: null,
+    numero: '',
+    status: 'rascunho',
+    cliente: {
+      nome: '', cnpj: '', contato: '', email: '', telefone: '',
+      representante: '', periodoDias: 0, diasEmbarcados: 0,
+      localEmbarqueEquipe: '', localEmbarqueMaterial: ''
+    },
+    itens: [],
+    equipe: [],
+    extras: { transporte: 0, hospedagem: 0, diversos: 0, observacoes: '' },
+    margem: Store.state.config.margem || 0.30,
+    impostos: Store.state.config.impostos || 0.1853,
+    subtotal: 0,
+    total: 0
+  };
+}
+
+function viewPropostaEdit() {
+  const p = _propostaAtual || propostaVazia();
+  if (!_propostaAtual) _propostaAtual = p;
+
+  return `
+    <div class="proposta-layout">
+      <div>
+        ${secaoCliente(p)}
+        ${secaoItens(p)}
+        ${secaoEquipe(p)}
+        ${secaoExtras(p)}
+      </div>
+      <div>
+        ${resumoCard(p)}
+      </div>
+    </div>
+  `;
+}
+
+// ============ Seções ============
+function secaoCliente(p) {
+  const c = p.cliente || {};
+  return `
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header">
+      <div class="card-title">Dados do cliente</div>
+      <div class="text-mono text-muted" style="font-size:11px">${p.numero || 'NOVA PROPOSTA'}</div>
+    </div>
+    <div class="card-body">
+      <div class="form-grid cols-2">
+        <div class="field" style="grid-column: span 2">
+          <label>Nome do cliente</label>
+          <input class="input" data-cliente="nome" value="${c.nome || ''}" placeholder="Razão social ou nome fantasia"/>
+        </div>
+        <div class="field">
+          <label>CNPJ</label>
+          <input class="input mono" data-cliente="cnpj" value="${c.cnpj || ''}" placeholder="00.000.000/0000-00"/>
+        </div>
+        <div class="field">
+          <label>Contato</label>
+          <input class="input" data-cliente="contato" value="${c.contato || ''}" placeholder="Nome do contato"/>
+        </div>
+        <div class="field">
+          <label>E-mail</label>
+          <input class="input" type="email" data-cliente="email" value="${c.email || ''}" placeholder="contato@cliente.com.br"/>
+        </div>
+        <div class="field">
+          <label>Telefone</label>
+          <input class="input mono" data-cliente="telefone" value="${c.telefone || ''}" placeholder="(00) 00000-0000"/>
+        </div>
+        <div class="field">
+          <label>Representante</label>
+          <input class="input" data-cliente="representante" value="${c.representante || ''}"/>
+        </div>
+        <div class="field">
+          <label>Período do serviço (dias)</label>
+          <input class="input mono" type="number" data-cliente="periodoDias" value="${c.periodoDias || 0}"/>
+        </div>
+        <div class="field">
+          <label>Dias embarcados</label>
+          <input class="input mono" type="number" data-cliente="diasEmbarcados" value="${c.diasEmbarcados || 0}"/>
+        </div>
+        <div class="field">
+          <label>Local de embarque (equipe)</label>
+          <input class="input" data-cliente="localEmbarqueEquipe" value="${c.localEmbarqueEquipe || ''}"/>
+        </div>
+        <div class="field">
+          <label>Local de embarque (material)</label>
+          <input class="input" data-cliente="localEmbarqueMaterial" value="${c.localEmbarqueMaterial || ''}"/>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function secaoItens(p) {
+  const itens = p.itens || [];
+
+  return `
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header">
+      <div class="card-title">Itens de reparo</div>
+      <button class="btn btn-primary btn-sm" data-action="add-item">${Icons.plus} Adicionar item</button>
+    </div>
+    <div class="card-body dense">
+      ${itens.length === 0 ? `
+        <div class="empty">
+          ${Icons.calculator}
+          <h3>Nenhum item adicionado</h3>
+          <p>Adicione itens de reparo para que o sistema calcule preço por m²/mm</p>
+          <button class="btn btn-primary" data-action="add-item">${Icons.plus} Adicionar item</button>
+        </div>
+      ` : `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>TAG / Linha</th>
+                <th>Tipo de reparo</th>
+                <th class="num">Área (m²)</th>
+                <th class="num">Esp. (mm)</th>
+                <th class="num">m²·mm</th>
+                <th class="num">Custo/m²·mm</th>
+                <th class="num">Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itens.map((it, idx) => renderLinhaItem(it, idx)).join('')}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="7" class="text-right text-muted text-mono" style="text-transform:uppercase;font-size:11px;letter-spacing:0.1em">Subtotal de itens</td>
+                <td class="num"><strong>${fmtBRL(p.subtotalItens || 0)}</strong></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      `}
+    </div>
+  </div>`;
+}
+
+function renderLinhaItem(it, idx) {
+  const m2mm = (it.area || 0) * (it.espessura || 0);
+  const sub = m2mm * (it.custoM2mm || 0);
+  return `
+    <tr data-item-idx="${idx}">
+      <td class="text-mono text-muted">${String(idx + 1).padStart(2, '0')}</td>
+      <td>
+        <input class="input" style="min-width:140px" data-item="${idx}" data-field="tag" value="${it.tag || ''}" placeholder="ex.: Linha 4&quot;"/>
+      </td>
+      <td>
+        <input class="input" style="min-width:140px" data-item="${idx}" data-field="tipo" value="${it.tipo || ''}" placeholder="ex.: Furo"/>
+      </td>
+      <td><input class="input mono num-input" style="width:90px;text-align:right" type="number" step="0.01" data-item="${idx}" data-field="area" value="${it.area || 0}"/></td>
+      <td><input class="input mono num-input" style="width:90px;text-align:right" type="number" step="0.01" data-item="${idx}" data-field="espessura" value="${it.espessura || 0}"/></td>
+      <td class="num">${fmtNum(m2mm, 3)}</td>
+      <td><input class="input mono num-input" style="width:110px;text-align:right" type="number" step="0.01" data-item="${idx}" data-field="custoM2mm" value="${it.custoM2mm || 0}"/></td>
+      <td class="num"><strong>${fmtBRL(sub)}</strong></td>
+      <td><button class="btn btn-icon btn-danger btn-sm" data-action="del-item" data-idx="${idx}">${Icons.trash}</button></td>
+    </tr>`;
+}
+
+function secaoEquipe(p) {
+  const eq = p.equipe || [];
+  return `
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header">
+      <div class="card-title">Equipe / Mão de obra</div>
+      <button class="btn btn-primary btn-sm" data-action="add-mo">${Icons.plus} Adicionar função</button>
+    </div>
+    <div class="card-body dense">
+      ${eq.length === 0 ? `
+        <div class="empty" style="padding:32px 24px">
+          ${Icons.users}
+          <h3 style="font-size:14px">Nenhuma função alocada</h3>
+          <p>Adicione funções e quantidade de diárias</p>
+        </div>
+      ` : `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Função</th>
+                <th class="num">Qtd. pessoas</th>
+                <th class="num">Diárias</th>
+                <th class="num">Valor diária</th>
+                <th class="num">Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${eq.map((e, idx) => {
+                const sub = (e.qtdPessoas || 0) * (e.diarias || 0) * (e.valorDiaria || 0);
+                return `<tr data-mo-idx="${idx}">
+                  <td>
+                    <select class="select" data-mo="${idx}" data-field="moId">
+                      <option value="">— selecione —</option>
+                      ${Store.maoObra.list().map(m => `<option value="${m.id}" ${m.id === e.moId ? 'selected' : ''}>${m.tipo} (${m.modalidade}) — ${fmtBRL(m.diaria)}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td><input class="input mono num-input" style="width:80px;text-align:right" type="number" step="1" data-mo="${idx}" data-field="qtdPessoas" value="${e.qtdPessoas || 1}"/></td>
+                  <td><input class="input mono num-input" style="width:80px;text-align:right" type="number" step="0.1" data-mo="${idx}" data-field="diarias" value="${e.diarias || 0}"/></td>
+                  <td><input class="input mono num-input" style="width:110px;text-align:right" type="number" step="0.01" data-mo="${idx}" data-field="valorDiaria" value="${e.valorDiaria || 0}"/></td>
+                  <td class="num"><strong>${fmtBRL(sub)}</strong></td>
+                  <td><button class="btn btn-icon btn-danger btn-sm" data-action="del-mo" data-idx="${idx}">${Icons.trash}</button></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="text-right text-muted text-mono" style="text-transform:uppercase;font-size:11px;letter-spacing:0.1em">Subtotal de mão de obra</td>
+                <td class="num"><strong>${fmtBRL(p.subtotalMO || 0)}</strong></td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      `}
+    </div>
+  </div>`;
+}
+
+function secaoExtras(p) {
+  const ex = p.extras || {};
+  return `
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header">
+      <div class="card-title">Custos adicionais & observações</div>
+    </div>
+    <div class="card-body">
+      <div class="form-grid cols-3">
+        <div class="field">
+          <label>Transporte / logística (R$)</label>
+          <input class="input mono" type="number" step="0.01" data-extra="transporte" value="${ex.transporte || 0}"/>
+        </div>
+        <div class="field">
+          <label>Hospedagem / alimentação (R$)</label>
+          <input class="input mono" type="number" step="0.01" data-extra="hospedagem" value="${ex.hospedagem || 0}"/>
+        </div>
+        <div class="field">
+          <label>Diversos (R$)</label>
+          <input class="input mono" type="number" step="0.01" data-extra="diversos" value="${ex.diversos || 0}"/>
+        </div>
+      </div>
+      <div class="field mt-16">
+        <label>Observações da proposta</label>
+        <textarea class="textarea" data-extra="observacoes" placeholder="Notas técnicas, condições comerciais, validade...">${ex.observacoes || ''}</textarea>
+      </div>
+    </div>
+  </div>`;
+}
+
+function resumoCard(p) {
+  return `
+  <div class="card summary-card">
+    <div class="card-header">
+      <div class="card-title">Composição final</div>
+    </div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Status</label>
+          <select class="select" data-prop="status">
+            ${[['rascunho','Rascunho'],['enviada','Enviada'],['aprovada','Aprovada'],['perdida','Perdida']].map(([v,l]) =>
+              `<option value="${v}" ${p.status === v ? 'selected' : ''}>${l}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-grid cols-2">
+          <div class="field">
+            <label>Margem (%)</label>
+            <input class="input mono" type="number" step="0.1" data-prop="margem" value="${((p.margem || 0) * 100).toFixed(2)}"/>
+          </div>
+          <div class="field">
+            <label>Impostos (%)</label>
+            <input class="input mono" type="number" step="0.01" data-prop="impostos" value="${((p.impostos || 0) * 100).toFixed(2)}"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-24">
+        <div class="summary-row">
+          <span class="lbl">Itens de reparo</span>
+          <span class="val">${fmtBRL(p.subtotalItens || 0)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Mão de obra</span>
+          <span class="val">${fmtBRL(p.subtotalMO || 0)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Custos adicionais</span>
+          <span class="val">${fmtBRL(p.subtotalExtras || 0)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Subtotal (custo)</span>
+          <span class="val">${fmtBRL(p.custoTotal || 0)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Margem (${fmtNum((p.margem || 0) * 100, 2)}%)</span>
+          <span class="val">${fmtBRL(p.valorMargem || 0)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Subtotal s/ impostos</span>
+          <span class="val">${fmtBRL(p.subtotal || 0)}</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Impostos (${fmtNum((p.impostos || 0) * 100, 2)}%)</span>
+          <span class="val">${fmtBRL(p.valorImpostos || 0)}</span>
+        </div>
+        <div class="summary-row total">
+          <span class="lbl"><strong style="color:var(--text-0);font-size:13px">Valor total</strong></span>
+          <span class="val">${fmtBRL(p.total || 0)}</span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px" class="mt-24">
+        <button class="btn btn-primary" data-action="salvar-proposta">
+          ${Icons.download} Salvar proposta
+        </button>
+        <button class="btn" data-action="imprimir-proposta">
+          ${Icons.printer} Visualizar / Imprimir
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ============= Cálculo =============
+function recalcularProposta(p) {
+  // Subtotal de itens
+  p.subtotalItens = (p.itens || []).reduce((s, it) => {
+    const m2mm = (it.area || 0) * (it.espessura || 0);
+    return s + m2mm * (it.custoM2mm || 0);
+  }, 0);
+
+  // Subtotal de mão de obra
+  p.subtotalMO = (p.equipe || []).reduce((s, e) =>
+    s + (e.qtdPessoas || 0) * (e.diarias || 0) * (e.valorDiaria || 0), 0);
+
+  // Extras
+  const ex = p.extras || {};
+  p.subtotalExtras = (ex.transporte || 0) + (ex.hospedagem || 0) + (ex.diversos || 0);
+
+  // Custo total
+  p.custoTotal = p.subtotalItens + p.subtotalMO + p.subtotalExtras;
+
+  // Margem
+  p.valorMargem = p.custoTotal * (p.margem || 0);
+  p.subtotal = p.custoTotal + p.valorMargem;
+
+  // Impostos (gross-up — sobre o valor final)
+  // Total = Subtotal / (1 - imposto)
+  const imp = p.impostos || 0;
+  if (imp > 0 && imp < 1) {
+    p.total = p.subtotal / (1 - imp);
+    p.valorImpostos = p.total - p.subtotal;
+  } else {
+    p.total = p.subtotal;
+    p.valorImpostos = 0;
+  }
+
+  return p;
+}
+
+// ============= Bindings =============
+function bindPropostaEdit() {
+  const p = _propostaAtual;
+  if (!p) return;
+
+  // dados do cliente
+  document.querySelectorAll('[data-cliente]').forEach(el => {
+    el.oninput = () => {
+      const field = el.dataset.cliente;
+      p.cliente[field] = (el.type === 'number') ? parseNum(el.value) : el.value;
+    };
+  });
+
+  // status e margem/impostos
+  document.querySelectorAll('[data-prop]').forEach(el => {
+    el.oninput = el.onchange = () => {
+      const field = el.dataset.prop;
+      if (field === 'margem' || field === 'impostos') {
+        p[field] = parseNum(el.value) / 100;
+      } else {
+        p[field] = el.value;
+      }
+      recalcularProposta(p);
+      refreshSummary();
+    };
+  });
+
+  // itens
+  document.querySelectorAll('[data-item]').forEach(el => {
+    el.oninput = () => {
+      const idx = parseInt(el.dataset.item);
+      const field = el.dataset.field;
+      const it = p.itens[idx];
+      if (!it) return;
+      it[field] = (el.type === 'number') ? parseNum(el.value) : el.value;
+      recalcularProposta(p);
+      refreshItensETotais();
+    };
+  });
+
+  // mão de obra
+  document.querySelectorAll('[data-mo]').forEach(el => {
+    el.oninput = el.onchange = () => {
+      const idx = parseInt(el.dataset.mo);
+      const field = el.dataset.field;
+      const m = p.equipe[idx];
+      if (!m) return;
+      if (field === 'moId') {
+        m.moId = el.value;
+        const mo = Store.maoObra.get(el.value);
+        if (mo) m.valorDiaria = mo.diaria;
+      } else {
+        m[field] = parseNum(el.value);
+      }
+      recalcularProposta(p);
+      refreshMOETotais();
+    };
+  });
+
+  // extras
+  document.querySelectorAll('[data-extra]').forEach(el => {
+    el.oninput = () => {
+      const field = el.dataset.extra;
+      p.extras = p.extras || {};
+      p.extras[field] = (el.tagName === 'TEXTAREA') ? el.value : parseNum(el.value);
+      recalcularProposta(p);
+      refreshSummary();
+    };
+  });
+}
+
+function refreshSummary() {
+  const card = document.querySelector('.summary-card');
+  if (!card) return;
+  const newCard = document.createElement('div');
+  newCard.innerHTML = resumoCard(_propostaAtual);
+  card.replaceWith(newCard.firstElementChild);
+  bindPropostaEdit();
+}
+
+function refreshItensETotais() {
+  // re-renderiza os subtotais da tabela de itens (linhas individuais)
+  document.querySelectorAll('tr[data-item-idx]').forEach(tr => {
+    const idx = parseInt(tr.dataset.itemIdx);
+    const it = _propostaAtual.itens[idx];
+    if (!it) return;
+    const m2mm = (it.area || 0) * (it.espessura || 0);
+    const sub = m2mm * (it.custoM2mm || 0);
+    const tds = tr.querySelectorAll('td');
+    if (tds[5]) tds[5].textContent = fmtNum(m2mm, 3);
+    if (tds[7]) tds[7].innerHTML = `<strong>${fmtBRL(sub)}</strong>`;
+  });
+
+  // tfoot da tabela de itens (procura a tabela que contém linhas com data-item-idx)
+  const tables = document.querySelectorAll('.card .table-wrap table');
+  tables.forEach(tbl => {
+    if (tbl.querySelector('tr[data-item-idx]')) {
+      const tfoot = tbl.querySelector('tfoot td.num');
+      if (tfoot) tfoot.innerHTML = `<strong>${fmtBRL(_propostaAtual.subtotalItens || 0)}</strong>`;
+    }
+  });
+
+  refreshSummary();
+}
+
+function refreshMOETotais() {
+  document.querySelectorAll('tr[data-mo-idx]').forEach(tr => {
+    const idx = parseInt(tr.dataset.moIdx);
+    const e = _propostaAtual.equipe[idx];
+    if (!e) return;
+    const sub = (e.qtdPessoas || 0) * (e.diarias || 0) * (e.valorDiaria || 0);
+    const valorInp = tr.querySelector('[data-field=valorDiaria]');
+    if (valorInp && valorInp !== document.activeElement) valorInp.value = e.valorDiaria || 0;
+    const tds = tr.querySelectorAll('td');
+    if (tds[4]) tds[4].innerHTML = `<strong>${fmtBRL(sub)}</strong>`;
+  });
+
+  // atualizar tfoot da tabela MO — busca a SEGUNDA tabela na página (a primeira é itens)
+  const tables = document.querySelectorAll('.card .table-wrap table');
+  tables.forEach(tbl => {
+    if (tbl.querySelector('tr[data-mo-idx]')) {
+      const tfoot = tbl.querySelector('tfoot td.num');
+      if (tfoot) tfoot.innerHTML = `<strong>${fmtBRL(_propostaAtual.subtotalMO || 0)}</strong>`;
+    }
+  });
+
+  refreshSummary();
+}
+
+// ============= Ações =============
+function adicionarItem() {
+  _propostaAtual.itens = _propostaAtual.itens || [];
+  _propostaAtual.itens.push({
+    tag: '', tipo: 'Furo', area: 1, espessura: 1, custoM2mm: 1700
+  });
+  recalcularProposta(_propostaAtual);
+  Router.render();
+}
+
+function removerItem(idx) {
+  _propostaAtual.itens.splice(idx, 1);
+  recalcularProposta(_propostaAtual);
+  Router.render();
+}
+
+function adicionarMO() {
+  _propostaAtual.equipe = _propostaAtual.equipe || [];
+  const primeiro = Store.maoObra.list()[0];
+  _propostaAtual.equipe.push({
+    moId: primeiro?.id || '',
+    qtdPessoas: 1,
+    diarias: _propostaAtual.cliente?.diasEmbarcados || 1,
+    valorDiaria: primeiro?.diaria || 0
+  });
+  recalcularProposta(_propostaAtual);
+  Router.render();
+}
+
+function removerMO(idx) {
+  _propostaAtual.equipe.splice(idx, 1);
+  recalcularProposta(_propostaAtual);
+  Router.render();
+}
+
+function salvarProposta() {
+  const p = _propostaAtual;
+  if (!p.cliente?.nome) {
+    toast('Informe o nome do cliente antes de salvar', 'danger');
+    return;
+  }
+  recalcularProposta(p);
+  if (p.id) {
+    Store.propostas.update(p.id, p);
+    toast('Proposta atualizada', 'success');
+  } else {
+    const saved = Store.propostas.add(p);
+    _propostaAtual = saved;
+    toast('Proposta criada — ' + saved.numero, 'success');
+  }
+  Router.navigate('#/propostas/' + _propostaAtual.id);
+}
+
+window.viewPropostaEdit = viewPropostaEdit;
+window.bindPropostaEdit = bindPropostaEdit;
+window.carregarProposta = carregarProposta;
+window.recalcularProposta = recalcularProposta;
+window.adicionarItem = adicionarItem;
+window.removerItem = removerItem;
+window.adicionarMO = adicionarMO;
+window.removerMO = removerMO;
+window.salvarProposta = salvarProposta;
+window._getPropostaAtual = () => _propostaAtual;
+
+// ===========================================================
+// views/proposta_print.js + configuracoes.js
+// ===========================================================
+
+function viewPropostaPrint(p) {
+  if (!p) return '<div class="empty"><h3>Proposta não encontrada</h3></div>';
+
+  const c = p.cliente || {};
+  const cfg = Store.state.config;
+
+  return `
+    <div class="no-print" style="margin-bottom:16px;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn" data-action="voltar-edit" data-id="${p.id}">${Icons.edit} Editar</button>
+      <button class="btn btn-primary" onclick="window.print()">${Icons.printer} Imprimir / Salvar PDF</button>
+    </div>
+
+    <div class="doc-page">
+      <div class="doc-header">
+        <div>
+          <div class="doc-title"><strong>${cfg.empresa || 'Sua Empresa'}</strong></div>
+          ${cfg.cnpj ? `<div class="doc-meta" style="text-align:left;margin-top:4px">CNPJ: ${cfg.cnpj}</div>` : ''}
+          ${cfg.responsavel ? `<div class="doc-meta" style="text-align:left">Resp.: ${cfg.responsavel}</div>` : ''}
+        </div>
+        <div class="doc-meta">
+          <div>PROPOSTA COMERCIAL</div>
+          <div><strong>${p.numero}</strong></div>
+          <div>Emissão: ${fmtDate(p.criadoEm)}</div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h2>Cliente</h2>
+        <div class="doc-kv">
+          <div><div class="lbl">Razão social</div><div class="val">${c.nome || '—'}</div></div>
+          <div><div class="lbl">CNPJ</div><div class="val">${c.cnpj || '—'}</div></div>
+          <div><div class="lbl">Contato</div><div class="val">${c.contato || '—'}</div></div>
+          <div><div class="lbl">E-mail / telefone</div><div class="val">${c.email || '—'} ${c.telefone ? ' · ' + c.telefone : ''}</div></div>
+          ${c.representante ? `<div><div class="lbl">Representante</div><div class="val">${c.representante}</div></div>` : ''}
+          ${(c.periodoDias || c.diasEmbarcados) ? `<div><div class="lbl">Período</div><div class="val">${c.periodoDias || 0} dias · ${c.diasEmbarcados || 0} embarcados</div></div>` : ''}
+          ${c.localEmbarqueEquipe ? `<div><div class="lbl">Embarque (equipe)</div><div class="val">${c.localEmbarqueEquipe}</div></div>` : ''}
+          ${c.localEmbarqueMaterial ? `<div><div class="lbl">Embarque (material)</div><div class="val">${c.localEmbarqueMaterial}</div></div>` : ''}
+        </div>
+      </div>
+
+      ${(p.itens && p.itens.length) ? `
+        <div class="doc-section">
+          <h2>Itens de reparo</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>TAG / Linha</th><th>Tipo</th>
+                <th class="num">Área (m²)</th><th class="num">Esp. (mm)</th>
+                <th class="num">m²·mm</th><th class="num">Custo/m²·mm</th><th class="num">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${p.itens.map((it, idx) => {
+                const m2mm = (it.area || 0) * (it.espessura || 0);
+                const sub = m2mm * (it.custoM2mm || 0);
+                return `<tr>
+                  <td>${idx + 1}</td>
+                  <td>${it.tag || '—'}</td>
+                  <td>${it.tipo || '—'}</td>
+                  <td class="num">${fmtNum(it.area, 2)}</td>
+                  <td class="num">${fmtNum(it.espessura, 2)}</td>
+                  <td class="num">${fmtNum(m2mm, 3)}</td>
+                  <td class="num">${fmtBRL(it.custoM2mm)}</td>
+                  <td class="num"><strong>${fmtBRL(sub)}</strong></td>
+                </tr>`;
+              }).join('')}
+              <tr><td colspan="7" class="num"><strong>Subtotal de itens</strong></td><td class="num"><strong>${fmtBRL(p.subtotalItens || 0)}</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      ` : ''}
+
+      ${(p.equipe && p.equipe.length) ? `
+        <div class="doc-section">
+          <h2>Mão de obra</h2>
+          <table>
+            <thead>
+              <tr><th>Função</th><th class="num">Pessoas</th><th class="num">Diárias</th><th class="num">Valor diária</th><th class="num">Subtotal</th></tr>
+            </thead>
+            <tbody>
+              ${p.equipe.map(e => {
+                const mo = Store.maoObra.get(e.moId);
+                const sub = (e.qtdPessoas || 0) * (e.diarias || 0) * (e.valorDiaria || 0);
+                return `<tr>
+                  <td>${mo ? `${mo.tipo} (${mo.modalidade})` : '—'}</td>
+                  <td class="num">${e.qtdPessoas || 0}</td>
+                  <td class="num">${fmtNum(e.diarias, 1)}</td>
+                  <td class="num">${fmtBRL(e.valorDiaria)}</td>
+                  <td class="num"><strong>${fmtBRL(sub)}</strong></td>
+                </tr>`;
+              }).join('')}
+              <tr><td colspan="4" class="num"><strong>Subtotal de mão de obra</strong></td><td class="num"><strong>${fmtBRL(p.subtotalMO || 0)}</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      ` : ''}
+
+      <div class="doc-section">
+        <h2>Composição do valor</h2>
+        <table>
+          <tbody>
+            <tr><td>Itens de reparo</td><td class="num">${fmtBRL(p.subtotalItens || 0)}</td></tr>
+            <tr><td>Mão de obra</td><td class="num">${fmtBRL(p.subtotalMO || 0)}</td></tr>
+            <tr><td>Custos adicionais (transporte, hospedagem, diversos)</td><td class="num">${fmtBRL(p.subtotalExtras || 0)}</td></tr>
+            <tr><td><strong>Custo total</strong></td><td class="num"><strong>${fmtBRL(p.custoTotal || 0)}</strong></td></tr>
+            <tr><td>Margem (${fmtNum((p.margem || 0) * 100, 2)}%)</td><td class="num">${fmtBRL(p.valorMargem || 0)}</td></tr>
+            <tr><td>Subtotal sem impostos</td><td class="num">${fmtBRL(p.subtotal || 0)}</td></tr>
+            <tr><td>Impostos (${fmtNum((p.impostos || 0) * 100, 2)}%)</td><td class="num">${fmtBRL(p.valorImpostos || 0)}</td></tr>
+            <tr style="background:#fef3c7"><td><strong style="font-size:15px">VALOR TOTAL DA PROPOSTA</strong></td><td class="num"><strong style="font-size:18px;color:#92400e">${fmtBRL(p.total || 0)}</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      ${p.extras?.observacoes ? `
+        <div class="doc-section">
+          <h2>Observações</h2>
+          <div style="font-size:13px;line-height:1.7;white-space:pre-wrap">${p.extras.observacoes}</div>
+        </div>
+      ` : ''}
+
+      <div class="doc-section" style="margin-top:48px;font-size:11px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:16px">
+        Proposta válida por 30 dias a partir da data de emissão, salvo indicação em contrário. Os valores podem sofrer ajuste em caso de variação de matéria-prima ou alteração de escopo.
+      </div>
+    </div>
+  `;
+}
+
+// ============================================
+// EDITAL READER — Extrai dados de PDFs/XLSXs do Petronect
+// ============================================
+// Carregamento lazy das libs (só quando o usuário usa pela primeira vez)
+
+const EditalReader = {
+  _loaded: false,
+
+  async loadLibs() {
+    if (this._loaded) return;
+    // Carrega pdf.js, xlsx.js e jszip em paralelo
+    await Promise.all([
+      this._loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'),
+      this._loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'),
+      this._loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js')
+    ]);
+    // configura worker do pdf.js
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+    this._loaded = true;
+  },
+
+  _loadScript(src) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${src}"]`)) return resolve();
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('Falha ao carregar ' + src));
+      document.head.appendChild(s);
+    });
+  },
+
+  // -------- Processamento principal --------
+  async processarArquivos(arquivos, onProgress) {
+    await this.loadLibs();
+    const resultado = {
+      identificacao: {},
+      datas: {},
+      ppu: { itens: [] },
+      arquivosLidos: [],
+      erros: []
+    };
+
+    for (const arquivo of arquivos) {
+      try {
+        onProgress?.({ status: 'processando', nome: arquivo.name });
+        const tipo = this._classificarArquivo(arquivo);
+        let extraido = null;
+
+        if (tipo === 'pdf') {
+          extraido = await this._lerPDF(arquivo);
+        } else if (tipo === 'xlsx') {
+          extraido = await this._lerXLSX(arquivo);
+        } else if (tipo === 'zip') {
+          extraido = await this._lerZIP(arquivo);
+        }
+
+        if (extraido) {
+          this._mesclar(resultado, extraido);
+          resultado.arquivosLidos.push({
+            nome: arquivo.name,
+            tipo,
+            tamanho: arquivo.size,
+            campos: extraido._camposExtraidos || []
+          });
+        }
+        onProgress?.({ status: 'ok', nome: arquivo.name });
+      } catch (e) {
+        resultado.erros.push({ nome: arquivo.name, erro: e.message });
+        onProgress?.({ status: 'erro', nome: arquivo.name, erro: e.message });
+      }
+    }
+    return resultado;
+  },
+
+  _classificarArquivo(arquivo) {
+    const ext = arquivo.name.toLowerCase().split('.').pop();
+    if (ext === 'pdf') return 'pdf';
+    if (['xlsx', 'xlsm', 'xls'].includes(ext)) return 'xlsx';
+    if (ext === 'zip') return 'zip';
+    return 'desconhecido';
+  },
+
+  _mesclar(destino, origem) {
+    // Mescla sem sobrescrever valores já preenchidos
+    if (origem.identificacao) {
+      Object.entries(origem.identificacao).forEach(([k, v]) => {
+        if (v && !destino.identificacao[k]) destino.identificacao[k] = v;
+      });
+    }
+    if (origem.datas) {
+      Object.entries(origem.datas).forEach(([k, v]) => {
+        if (v && !destino.datas[k]) destino.datas[k] = v;
+      });
+    }
+    if (origem.ppu?.itens?.length) {
+      destino.ppu.itens.push(...origem.ppu.itens);
+    }
+  },
+
+  // -------- PDF --------
+  async _lerPDF(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let textoCompleto = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const tc = await page.getTextContent();
+      textoCompleto += tc.items.map(it => it.str).join(' ') + '\n';
+    }
+    return this._extrairDoTextoEdital(textoCompleto, file.name);
+  },
+
+  _extrairDoTextoEdital(texto, nomeArquivo) {
+    const r = { identificacao: {}, datas: {}, _camposExtraidos: [] };
+    // Normalização: colapsa whitespace, mas preserva separadores
+    const limpo = texto.replace(/\s+/g, ' ').trim();
+    // Corrige horários quebrados ("1 1 :00" → "11:00") — comum em PDFs
+    const corrigeHorarios = (s) => s.replace(/(\d)\s+(\d)\s*:(\d)\s*(\d)/g, '$1$2:$3$4');
+    const limpoCorrigido = corrigeHorarios(limpo);
+
+    // Padrões do Petronect (já vistos no Edital 7004592426)
+    const padroes = [
+      // Identificação
+      { campo: 'numero',          regex: /Oportunidade\s+n[ºo°]?\s*:?\s*(\d{8,12})/i, dest: 'identificacao' },
+      // Objeto: pega até "Oportunidade nº" ou "Procedimento" (que vem logo depois)
+      { campo: 'objeto',          regex: /OBJETO\s*:\s*(.+?)(?=\s+(?:●|•|Oportunidade\s+n[ºo°]|Procedimento\s+de\s+Contrata))/is, dest: 'identificacao', maxLen: 500 },
+      { campo: 'familia',         regex: /(?:Fam[ií]lia\s*:?\s*|Fam[ií]lia:\s*-+\s*)(\d{6,10})\s*[-–]?\s*([\w\s\u00C0-\u017F]{3,60}?)(?=\s*(?:[-–]+|Crit|Tipo|TODOS|\.|\(|$))/i, dest: 'identificacao', formatador: (m) => `${m[1]} - ${m[2].trim()}`, maxLen: 100 },
+      // Modalidade/Critério/Regime: remove bullet final
+      { campo: 'modalidade',      regex: /Procedimento\s+de\s+Contrata[cç][aã]o\s*:?\s*([^●•\n]+?)(?=\s*(?:●|•|Crit[eé]rio|$))/i, dest: 'identificacao', maxLen: 80 },
+      { campo: 'criterio',        regex: /Crit[eé]rio\s+de\s+Julgamento\s*:?\s*([^●•\n]+?)(?=\s*(?:●|•|In[ií]cio|Abertura|Data|Regime|$))/i, dest: 'identificacao', maxLen: 80 },
+      { campo: 'regimeExecucao',  regex: /Regime\s+de\s+Execu[cç][aã]o\s*:?\s*([^●•\n]+?)(?=\s*(?:●|•|Abrang|Crit|D[uú]vidas|$))/i, dest: 'identificacao', maxLen: 80 },
+      { campo: 'foro',            regex: /Foro\s+da\s+cidade\s+de\s+([\w\s\/\u00C0-\u017F]+?)(?=\s+para)/i, dest: 'identificacao', maxLen: 60 },
+      // Datas — usa versão com horário corrigido
+      { campo: 'dataInicio',      regex: /In[ií]cio\s+da\s+entrega\s+de\s+proposta\s*\([^)]+\)\s*:?\s*(\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2})/i, dest: 'datas', parser: 'datetimebr', usaCorrigido: true },
+      { campo: 'dataFim',         regex: /Abertura\s+de\s+proposta\s*\([^)]+\)\s*:?\s*(\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2})/i, dest: 'datas', parser: 'datetimebr', usaCorrigido: true },
+      { campo: 'prazoDuvidas',    regex: /D[uú]vidas\s+sobre\s+este\s+processo[^.]+?at[eé]\s+o\s+dia\s+(\d{2}\/\d{2}\/\d{4})/i, dest: 'datas', parser: 'datebr' }
+    ];
+
+    for (const p of padroes) {
+      const fonte = p.usaCorrigido ? limpoCorrigido : limpo;
+      const m = fonte.match(p.regex);
+      if (m) {
+        let v;
+        if (p.formatador) {
+          v = p.formatador(m);
+        } else {
+          v = (m[1] || '').trim().replace(/\s+/g, ' ');
+        }
+        // Limpa bullet/separadores no final
+        v = v.replace(/[●•\-–]+\s*$/, '').trim();
+        if (p.maxLen && v.length > p.maxLen) v = v.slice(0, p.maxLen).trim();
+        if (p.parser === 'datetimebr') v = this._parseBRDateTime(v);
+        else if (p.parser === 'datebr') v = this._parseBRDate(v);
+        if (v) {
+          r[p.dest][p.campo] = v;
+          r._camposExtraidos.push(p.campo);
+        }
+      }
+    }
+    return r;
+  },
+
+  _parseBRDate(s) {
+    const m = s.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    return m ? `${m[3]}-${m[2]}-${m[1]}` : null;
+  },
+
+  _parseBRDateTime(s) {
+    const m = s.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+    return m ? `${m[3]}-${m[2]}-${m[1]}T${m[4]}:${m[5]}` : null;
+  },
+
+  // -------- XLSX --------
+  async _lerXLSX(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const wb = XLSX.read(arrayBuffer, { type: 'array' });
+
+    const resultado = { ppu: { itens: [] }, _camposExtraidos: [] };
+
+    // Lista de nomes de aba a IGNORAR (são auxiliares, não a PPU principal)
+    const abasIgnorar = /^(orienta|dosagem|difal|partnumbers?|sum[aá]rio|instru[cç][oõ]es|dados\s+gerais|checklist|menu|remunera|encargos|equipamentos|materiais|servi[cç]os|im[oó]veis|software|bdi|dfp|mvc)/i;
+    // Prioridade: abas que contém "PPU" no nome são as principais
+    const abasPrincipais = wb.SheetNames.filter(n => /ppu/i.test(n) && !abasIgnorar.test(n));
+    const abasOutras = wb.SheetNames.filter(n => !abasIgnorar.test(n) && !/ppu/i.test(n));
+
+    // Processa primeiro as PPU principais; se nada extrair, tenta as outras
+    const ordemBusca = abasPrincipais.length > 0 ? abasPrincipais : abasOutras;
+    const descricoesJaVistas = new Set();
+
+    for (const sheetName of ordemBusca) {
+      const ws = wb.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      const itens = this._extrairPPUDeRows(rows);
+      if (itens.length) {
+        // Deduplica por descrição (caso a mesma PPU apareça em múltiplas abas)
+        const novos = itens.filter(it => {
+          const k = it.descricao.slice(0, 80).toLowerCase();
+          if (descricoesJaVistas.has(k)) return false;
+          descricoesJaVistas.add(k);
+          return true;
+        });
+        if (novos.length) {
+          resultado.ppu.itens.push(...novos);
+          resultado._camposExtraidos.push(`PPU "${sheetName}" (${novos.length} itens)`);
+        }
+      }
+    }
+    return resultado.ppu.itens.length ? resultado : null;
+  },
+
+  _extrairPPUDeRows(rows) {
+    if (!rows || rows.length < 2) return [];
+
+    // Normaliza valores das células: troca \r\n por espaço e limpa
+    const normCell = (c) => String(c || '').replace(/[\r\n]+/g, ' ').toLowerCase().trim();
+    // Versão sem espaços, para detectar células estilizadas tipo "S E R V I Ç O"
+    const compactCell = (c) => normCell(c).replace(/\s+/g, '');
+
+    // Procura a linha de cabeçalho — heurística mais robusta
+    let headerIdx = -1;
+    let cols = {};
+    for (let i = 0; i < Math.min(rows.length, 30); i++) {
+      const row = rows[i].map(normCell);
+      const rowCompact = rows[i].map(compactCell);
+
+      // Funções de match (procura na célula inteira, não só por includes)
+      const findColuna = (predicado) => row.findIndex(predicado);
+      const findColunaCompact = (predicado) => rowCompact.findIndex(predicado);
+
+      // ITEM: "ITEM PPU", "Item", "Nº", etc.
+      const idxItem = findColuna(c => {
+        if (c === 'item' || c === 'item ppu' || /^item\s*ppu/.test(c)) return true;
+        if (c === 'nº' || c === 'n°' || c === 'no' || c === 'numero') return true;
+        return false;
+      });
+      // DESCRIÇÃO: tenta primeiro versão normal, depois compacta (S E R V I Ç O)
+      let idxDescricao = findColuna(c => {
+        if (c.includes('lista anexa') || c.includes('lei 116') || c.includes('lc 116')) return false;
+        return c.includes('servi') || c.includes('descri') || c.includes('especif');
+      });
+      if (idxDescricao < 0) {
+        idxDescricao = findColunaCompact(c => {
+          if (c.includes('listaanexa') || c.includes('lei116') || c.includes('lc116')) return false;
+          return c.includes('servi') || c.includes('descri') || c.includes('especif');
+        });
+      }
+      // QUANTIDADE / DEMANDA
+      const idxDemanda = findColuna(c =>
+        c.includes('qtd') || c.includes('quantid') || c.includes('demanda')
+      );
+      // MARGEM VARIÁVEL
+      const idxMargem = findColuna(c => c.includes('margem'));
+      // UNIDADE
+      const idxUnidade = findColuna(c =>
+        c === 'un' || c === 'unid.' || c === 'unidade' || /^unid/.test(c) || c.includes('un.medida') || c.includes('un. medida')
+      );
+      // PREÇO UNITÁRIO
+      const idxPreco = findColuna(c =>
+        c.includes('pre') && (c.includes('unit') || c.includes('unitário'))
+      );
+
+      // Considera header se tem descrição + algum contador
+      const temDescricao = idxDescricao >= 0;
+      const temContador = idxDemanda >= 0 || idxMargem >= 0 || idxItem >= 0;
+      if (temDescricao && temContador) {
+        headerIdx = i;
+        cols = {
+          item: idxItem,
+          descricao: idxDescricao,
+          unidade: idxUnidade,
+          demanda: idxDemanda,
+          margem: idxMargem,
+          preco: idxPreco
+        };
+        break;
+      }
+    }
+
+    if (headerIdx < 0) return [];
+
+    // Lê linhas após o header
+    const itens = [];
+    for (let i = headerIdx + 1; i < rows.length; i++) {
+      const row = rows[i];
+      const descricao = cols.descricao >= 0 ? String(row[cols.descricao] || '').replace(/[\r\n]+/g, ' ').trim() : '';
+      if (!descricao || descricao.length < 5) continue;
+      // Ignora linhas "ASSINATURAS", "VALOR TOTAL", etc.
+      if (/^(assinatura|valor\s+total|total\s+geral|subtotal|observa[cç])/i.test(descricao)) continue;
+
+      const item = {
+        numero: cols.item >= 0 ? String(row[cols.item] || '').trim() : String(itens.length + 1),
+        descricao,
+        unidade: cols.unidade >= 0 ? String(row[cols.unidade] || '').replace(/[\r\n]+/g, ' ').trim() : 'un',
+        demandaEstimada: cols.demanda >= 0 ? this._parseNum(row[cols.demanda]) : 0,
+        margemVariavel: cols.margem >= 0 ? this._parseNum(row[cols.margem]) : 0,
+        precoUnitario: cols.preco >= 0 ? this._parseNum(row[cols.preco]) : 0,
+        dfp: null
+      };
+      // só adiciona se tiver pelo menos demanda ou um indicador numérico válido
+      if (item.demandaEstimada > 0 || item.margemVariavel > 0 || item.numero) {
+        itens.push(item);
+      }
+    }
+    return itens;
+  },
+
+  _parseNum(v) {
+    if (v === null || v === undefined || v === '') return 0;
+    if (typeof v === 'number') return v;
+    const s = String(v).replace(/\./g, '').replace(',', '.').replace(/[^\d.\-]/g, '');
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+  },
+
+  // -------- ZIP --------
+  async _lerZIP(file) {
+    const zip = await JSZip.loadAsync(file);
+    const resultado = { identificacao: {}, datas: {}, ppu: { itens: [] }, _camposExtraidos: [] };
+
+    for (const nome of Object.keys(zip.files)) {
+      const z = zip.files[nome];
+      if (z.dir) continue;
+      const ext = nome.toLowerCase().split('.').pop();
+      const baseName = nome.split('/').pop();
+
+      try {
+        if (ext === 'pdf') {
+          const blob = await z.async('blob');
+          const fakeFile = new File([blob], baseName, { type: 'application/pdf' });
+          const r = await this._lerPDF(fakeFile);
+          if (r) this._mesclar(resultado, r);
+        } else if (['xlsx', 'xlsm', 'xls'].includes(ext)) {
+          const blob = await z.async('blob');
+          const fakeFile = new File([blob], baseName);
+          const r = await this._lerXLSX(fakeFile);
+          if (r) this._mesclar(resultado, r);
+        }
+      } catch (e) {
+        console.warn('Erro ao processar dentro do zip:', baseName, e);
+      }
+    }
+    return resultado;
+  }
+};
+
+window.EditalReader = EditalReader;
+
+// ============================================
+// LICITAÇÕES — Lista + Editor
+// ============================================
+
+// Mapeamento de status → label/cor (estética consistente com o resto do sistema)
+const LIC_STATUS = {
+  em_analise:    { label: 'Em análise',     color: '#94a3b8', bg: 'rgba(148,163,184,0.15)' },
+  habilitacao:   { label: 'Habilitação',    color: '#f5a524', bg: 'rgba(245,165,36,0.15)' },
+  ppu_em_montagem: { label: 'PPU em montagem', color: '#3b82f6', bg: 'rgba(59,130,246,0.15)' },
+  pronta:        { label: 'Pronta p/ envio', color: '#06b6d4', bg: 'rgba(6,182,212,0.15)' },
+  enviada:       { label: 'Enviada',        color: '#8b5cf6', bg: 'rgba(139,92,246,0.15)' },
+  em_julgamento: { label: 'Em julgamento',  color: '#f59e0b', bg: 'rgba(245,158,11,0.15)' },
+  ganha:         { label: 'Ganha',          color: '#10b981', bg: 'rgba(16,185,129,0.15)' },
+  perdida:       { label: 'Perdida',        color: '#ef4444', bg: 'rgba(239,68,68,0.15)' },
+  cancelada:     { label: 'Cancelada',      color: '#64748b', bg: 'rgba(100,116,139,0.15)' }
+};
+
+function statusBadge(status) {
+  const s = LIC_STATUS[status] || LIC_STATUS.em_analise;
+  return `<span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;background:${s.bg};color:${s.color};border:1px solid ${s.color}40">${s.label}</span>`;
+}
+
+// -------- LISTA --------
+function viewLicitacoes() {
+  const lista = Store.licitacoes.list();
+  const filtroStatus = window._filtroLic || 'todas';
+  const filtradas = filtroStatus === 'todas'
+    ? lista
+    : lista.filter(l => l.status === filtroStatus);
+
+  const contadores = {};
+  Object.keys(LIC_STATUS).forEach(k => { contadores[k] = lista.filter(l => l.status === k).length; });
+  const total = lista.length;
+
+  const valorTotalEmAndamento = lista
+    .filter(l => ['em_analise', 'habilitacao', 'ppu_em_montagem', 'pronta'].includes(l.status))
+    .reduce((s, l) => s + (l.ppu?.valorTotal || 0), 0);
+
+  return `
+    <!-- KPIs -->
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-label">Licitações</div>
+        <div class="stat-value">${total}</div>
+        <div class="stat-meta">${contadores.em_analise + contadores.habilitacao + contadores.ppu_em_montagem + contadores.pronta} em andamento</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Em andamento (valor)</div>
+        <div class="stat-value">${fmtMoney(valorTotalEmAndamento)}</div>
+        <div class="stat-meta">Soma das PPUs em montagem</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Ganhas</div>
+        <div class="stat-value">${contadores.ganha}</div>
+        <div class="stat-meta">${contadores.perdida} perdidas · ${contadores.enviada + contadores.em_julgamento} aguardando</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Taxa de êxito</div>
+        <div class="stat-value">${contadores.ganha + contadores.perdida > 0 ? Math.round(100 * contadores.ganha / (contadores.ganha + contadores.perdida)) + '%' : '—'}</div>
+        <div class="stat-meta">Ganhas / (ganhas + perdidas)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div class="card-title">Todas as licitações</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select class="select" id="filtro-lic-status" style="min-width:160px">
+            <option value="todas" ${filtroStatus==='todas'?'selected':''}>Todos status</option>
+            ${Object.entries(LIC_STATUS).map(([k,v]) => `<option value="${k}" ${filtroStatus===k?'selected':''}>${v.label} (${contadores[k]})</option>`).join('')}
+          </select>
+          <button class="btn btn-primary" data-action="nova-licitacao">${Icons.plus} Nova licitação</button>
+        </div>
+      </div>
+      <div class="card-body dense">
+        ${filtradas.length === 0 ? `
+          <div class="empty">
+            ${Icons.inbox}
+            <h3>${total === 0 ? 'Nenhuma licitação ainda' : 'Nenhuma licitação com este filtro'}</h3>
+            <p>${total === 0 ? 'Cadastre uma nova licitação para começar a análise' : 'Tente outro status no filtro acima'}</p>
+            ${total === 0 ? `<button class="btn btn-primary btn-lg" data-action="nova-licitacao">${Icons.plus} Nova licitação</button>` : ''}
+          </div>
+        ` : `
+          <div class="table-wrap"><table>
+            <thead>
+              <tr>
+                <th>Nº / Cliente</th>
+                <th>Objeto</th>
+                <th>Status</th>
+                <th>Data fim</th>
+                <th>Valor estimado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filtradas.map(l => `
+                <tr style="cursor:pointer" data-action="abrir-licitacao" data-id="${l.id}">
+                  <td>
+                    <strong style="font-family:var(--font-mono);font-size:13px">${l.numero || '—'}</strong><br/>
+                    <span class="text-muted" style="font-size:12px">${l.cliente || 'Petrobras'}</span>
+                  </td>
+                  <td style="max-width:340px">
+                    <div style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.objeto || '—'}</div>
+                    ${l.familia ? `<div class="text-muted" style="font-size:11px;font-family:var(--font-mono)">${l.familia}</div>` : ''}
+                  </td>
+                  <td>${statusBadge(l.status)}</td>
+                  <td style="font-size:12px">${l.dataFim ? fmtDate(l.dataFim) : '—'}</td>
+                  <td class="text-mono" style="font-size:13px">${l.ppu?.valorTotal ? fmtMoney(l.ppu.valorTotal) : '—'}</td>
+                  <td style="text-align:right">
+                    <button class="btn btn-icon btn-ghost btn-sm" data-action="abrir-licitacao" data-id="${l.id}" title="Abrir">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table></div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function bindLicitacoesView() {
+  const sel = document.getElementById('filtro-lic-status');
+  if (sel) sel.onchange = () => {
+    window._filtroLic = sel.value;
+    Router.render();
+  };
+}
+
+// -------- EDITOR (nova / editar) --------
+let _licAtual = null;
+
+function viewLicitacaoEdit() {
+  if (!_licAtual) {
+    _licAtual = {
+      cliente: 'Petrobras',
+      numero: '',
+      objeto: '',
+      familia: '',
+      modalidade: 'Licitação modo fechado',
+      criterio: 'Menor preço por total',
+      regimeExecucao: 'Empreitada por preço unitário',
+      foro: '',
+      dataInicio: '',
+      dataFim: '',
+      prazoDuvidas: '',
+      validadeProposta: 90,
+      observacoes: '',
+      anexos: [],
+      ppu: { itens: [], valorTotal: 0 },
+      habilitacao: { legal: {}, economico: {}, tecnico: {}, tecSMS: {} },
+      status: 'em_analise',
+      eventos: []
+    };
+  }
+  const l = _licAtual;
+  const isNew = !l.id;
+
+  return `
+    <div style="max-width:1100px">
+
+      <!-- Cabeçalho com status -->
+      ${!isNew ? `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap">
+          <div>
+            <div class="text-muted" style="font-size:11px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.1em">Licitação</div>
+            <div style="font-family:var(--font-mono);font-weight:700;font-size:18px">${l.numero || '(sem número)'}</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            ${statusBadge(l.status)}
+            <select class="select" id="lic-status-change" style="min-width:170px">
+              ${Object.entries(LIC_STATUS).map(([k,v]) => `<option value="${k}" ${l.status===k?'selected':''}>${v.label}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      ` : ''}
+
+      <!-- BLOCO 0: Importar Edital (drag & drop) -->
+      <div class="card" style="margin-bottom:16px;border-color:rgba(245,165,36,0.3)">
+        <div class="card-header"><div class="card-title">📥 Importar pacote do edital</div></div>
+        <div class="card-body">
+          <div id="dropzone-edital" style="
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: var(--bg-2);
+          ">
+            <div style="font-size:36px;margin-bottom:8px">📤</div>
+            <div style="font-weight:600;margin-bottom:4px">Arraste o pacote da licitação aqui</div>
+            <div class="text-muted" style="font-size:12px">
+              Aceita PDF, XLSX, XLSM, ZIP — pode soltar vários ao mesmo tempo
+            </div>
+            <div style="margin-top:12px">
+              <button class="btn btn-sm" id="btn-selecionar-arquivos" type="button">ou clique para selecionar</button>
+              <input type="file" id="input-arquivos-edital" multiple accept=".pdf,.xlsx,.xlsm,.xls,.zip" style="display:none"/>
+            </div>
+          </div>
+
+          <div id="edital-progresso" style="display:none;margin-top:16px"></div>
+
+          <div id="edital-resultado" style="display:none;margin-top:16px"></div>
+        </div>
+      </div>
+
+      <!-- BLOCO 1: Identificação -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div class="card-title">Identificação da Licitação</div></div>
+        <div class="card-body">
+          <div class="form-grid cols-2">
+            <div class="form-row">
+              <label>Cliente</label>
+              <input class="input" data-lic="cliente" value="${l.cliente||''}" placeholder="Petrobras"/>
+            </div>
+            <div class="form-row">
+              <label>Oportunidade nº</label>
+              <input class="input" data-lic="numero" value="${l.numero||''}" placeholder="7004592426"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Objeto</label>
+            <textarea class="input" data-lic="objeto" rows="2" placeholder="Prestação dos Serviços de...">${l.objeto||''}</textarea>
+          </div>
+          <div class="form-grid cols-2">
+            <div class="form-row">
+              <label>Família (Catálogo Petrobras)</label>
+              <input class="input" data-lic="familia" value="${l.familia||''}" placeholder="99006208 - Manutenção de tubulação"/>
+            </div>
+            <div class="form-row">
+              <label>Modalidade</label>
+              <input class="input" data-lic="modalidade" value="${l.modalidade||''}" placeholder="Licitação modo fechado"/>
+            </div>
+            <div class="form-row">
+              <label>Critério de julgamento</label>
+              <input class="input" data-lic="criterio" value="${l.criterio||''}" placeholder="Menor preço por total"/>
+            </div>
+            <div class="form-row">
+              <label>Regime de execução</label>
+              <input class="input" data-lic="regimeExecucao" value="${l.regimeExecucao||''}" placeholder="Empreitada por preço unitário"/>
+            </div>
+            <div class="form-row">
+              <label>Foro</label>
+              <input class="input" data-lic="foro" value="${l.foro||''}" placeholder="Santos/SP"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCO 2: Datas e prazos -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div class="card-title">Datas e Prazos</div></div>
+        <div class="card-body">
+          <div class="form-grid cols-2">
+            <div class="form-row">
+              <label>Início da entrega de proposta</label>
+              <input type="datetime-local" class="input" data-lic="dataInicio" value="${l.dataInicio||''}"/>
+            </div>
+            <div class="form-row">
+              <label>Abertura de propostas (limite)</label>
+              <input type="datetime-local" class="input" data-lic="dataFim" value="${l.dataFim||''}"/>
+            </div>
+            <div class="form-row">
+              <label>Prazo para dúvidas (até)</label>
+              <input type="date" class="input" data-lic="prazoDuvidas" value="${l.prazoDuvidas||''}"/>
+            </div>
+            <div class="form-row">
+              <label>Validade da proposta (dias)</label>
+              <input type="number" class="input" data-lic="validadeProposta" value="${l.validadeProposta||90}" min="0"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCO 3: Observações + anexos do edital -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div class="card-title">Documentos do edital</div></div>
+        <div class="card-body">
+          <div class="form-row">
+            <label>Anotações internas</label>
+            <textarea class="input" data-lic="observacoes" rows="3" placeholder="Anote aqui pontos de atenção do edital, riscos, observações da equipe...">${l.observacoes||''}</textarea>
+          </div>
+          <div class="alert info" style="margin-top:8px">
+            <span>${Icons.info||''}ℹ️</span>
+            <div>
+              <strong>Anexos físicos:</strong> guarde o edital, adendos e PPU recebida em uma pasta no Google Drive ou Sharepoint da empresa.
+              Na próxima sprint a gente integra upload de arquivos.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCO 4: Próximas etapas (cards desabilitados que mostram o roadmap) -->
+      ${!isNew ? `
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div class="card-title">Próximas etapas</div></div>
+        <div class="card-body">
+          <div class="form-grid cols-2">
+            <div class="next-step disabled" title="Em breve - Sprint 2">
+              <div class="next-step-icon">📋</div>
+              <div>
+                <div class="next-step-title">Análise de Habilitação</div>
+                <div class="next-step-sub">Sprint 2 · Critério Legal, Econômico, Técnico, Tec-SMS</div>
+              </div>
+            </div>
+            <div class="next-step disabled" title="Em breve - Sprint 3">
+              <div class="next-step-icon">💰</div>
+              <div>
+                <div class="next-step-title">PPU + DFP</div>
+                <div class="next-step-sub">Sprint 3 · Montagem da Planilha de Preços e DFP</div>
+              </div>
+            </div>
+            <div class="next-step disabled" title="Em breve - Sprint 4">
+              <div class="next-step-icon">📤</div>
+              <div>
+                <div class="next-step-title">Geração XLSX</div>
+                <div class="next-step-sub">Sprint 4 · Export no formato Adendo C e Adendo E</div>
+              </div>
+            </div>
+            <div class="next-step disabled" title="Em breve - Sprint 5">
+              <div class="next-step-icon">📊</div>
+              <div>
+                <div class="next-step-title">Acompanhamento</div>
+                <div class="next-step-sub">Sprint 5 · Status, recursos, adjudicação</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCO 5: Histórico de eventos -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><div class="card-title">Histórico</div></div>
+        <div class="card-body dense">
+          ${(l.eventos || []).length === 0 ? `
+            <div class="empty" style="padding:16px"><p>Nenhum evento registrado</p></div>
+          ` : `
+            <div style="display:flex;flex-direction:column;gap:8px">
+              ${[...(l.eventos || [])].reverse().map(ev => `
+                <div style="display:flex;gap:12px;padding:8px;border-radius:6px;background:var(--bg-2)">
+                  <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-2);min-width:120px">${fmtDateTime(ev.data)}</div>
+                  <div style="flex:1">
+                    <strong style="font-size:13px">${ev.descricao}</strong>
+                    ${ev.usuarioNome ? `<span class="text-muted" style="font-size:11px"> · ${ev.usuarioNome}</span>` : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `}
+        </div>
+      </div>
+      ` : ''}
+
+      <!-- Ações -->
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
+        ${!isNew ? `<button class="btn btn-danger" data-action="excluir-licitacao" data-id="${l.id}">${Icons.trash} Excluir</button>` : ''}
+        <button class="btn" data-action="voltar-licitacoes">${Icons.arrowLeft||''}← Cancelar</button>
+        <button class="btn btn-primary" data-action="salvar-licitacao">${Icons.save} ${isNew ? 'Criar licitação' : 'Salvar alterações'}</button>
+      </div>
+    </div>
+
+    <style>
+      .next-step {
+        display: flex; gap: 12px; align-items: center;
+        padding: 14px; background: var(--bg-2); border: 1px solid var(--border);
+        border-radius: var(--radius); transition: all 0.15s;
+      }
+      .next-step.disabled { opacity: 0.55; cursor: not-allowed; }
+      .next-step-icon { font-size: 24px; }
+      .next-step-title { font-weight: 600; font-size: 14px; }
+      .next-step-sub { color: var(--text-2); font-size: 11px; font-family: var(--font-mono); margin-top: 2px; }
+    </style>
+  `;
+}
+
+function bindLicitacaoEdit() {
+  // bind inputs
+  document.querySelectorAll('[data-lic]').forEach(el => {
+    el.oninput = () => {
+      const field = el.dataset.lic;
+      let v = el.value;
+      if (field === 'validadeProposta') v = parseInt(v) || 0;
+      _licAtual[field] = v;
+    };
+  });
+
+  // status change
+  const stSel = document.getElementById('lic-status-change');
+  if (stSel) stSel.onchange = () => {
+    const novo = stSel.value;
+    const antigo = _licAtual.status;
+    if (novo === antigo) return;
+    _licAtual.status = novo;
+    _licAtual.eventos = [...(_licAtual.eventos || []), {
+      data: new Date().toISOString(),
+      tipo: 'status_change',
+      descricao: `Status alterado: ${LIC_STATUS[antigo]?.label || antigo} → ${LIC_STATUS[novo].label}`,
+      usuarioId: FB.user?.uid || null,
+      usuarioNome: FB.userDoc?.displayName || null
+    }];
+    // salva imediatamente
+    if (_licAtual.id) {
+      Store.licitacoes.update(_licAtual.id, _licAtual);
+      toast('Status atualizado');
+      Router.render();
+    }
+  };
+
+  // -------- Dropzone para upload do edital --------
+  const dz = document.getElementById('dropzone-edital');
+  const input = document.getElementById('input-arquivos-edital');
+  const btnSel = document.getElementById('btn-selecionar-arquivos');
+
+  if (dz && input) {
+    btnSel.onclick = (e) => { e.stopPropagation(); input.click(); };
+    dz.onclick = () => input.click();
+
+    ['dragenter', 'dragover'].forEach(evt => {
+      dz.addEventListener(evt, (e) => {
+        e.preventDefault(); e.stopPropagation();
+        dz.style.borderColor = 'var(--accent)';
+        dz.style.background = 'rgba(245,165,36,0.08)';
+      });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      dz.addEventListener(evt, (e) => {
+        e.preventDefault(); e.stopPropagation();
+        dz.style.borderColor = 'var(--border)';
+        dz.style.background = 'var(--bg-2)';
+      });
+    });
+    dz.addEventListener('drop', async (e) => {
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length) await processarUploadEdital(files);
+    });
+    input.onchange = async () => {
+      const files = Array.from(input.files);
+      if (files.length) await processarUploadEdital(files);
+      input.value = '';   // permite re-upload do mesmo arquivo
+    };
+  }
+}
+
+async function processarUploadEdital(files) {
+  const progresso = document.getElementById('edital-progresso');
+  const resultado = document.getElementById('edital-resultado');
+  progresso.style.display = 'block';
+  resultado.style.display = 'none';
+
+  // mostra cards de progresso
+  const initialHtml = files.map(f => `
+    <div data-arquivo-progresso="${f.name}" style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;background:var(--bg-2);margin-bottom:6px">
+      <div class="spinner" style="width:14px;height:14px;border:2px solid var(--bg-3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+      <div style="flex:1;font-size:13px">${f.name}</div>
+      <div class="text-muted" style="font-size:11px">aguardando…</div>
+    </div>
+  `).join('');
+  progresso.innerHTML = `
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px">Processando arquivos…</div>
+    ${initialHtml}
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  `;
+
+  try {
+    const dados = await EditalReader.processarArquivos(files, (ev) => {
+      const card = document.querySelector(`[data-arquivo-progresso="${ev.nome}"]`);
+      if (!card) return;
+      if (ev.status === 'ok') {
+        card.children[0].outerHTML = '<div style="color:var(--success);font-size:14px">✓</div>';
+        card.children[card.children.length - 1].textContent = 'lido';
+        card.children[card.children.length - 1].style.color = 'var(--success)';
+      } else if (ev.status === 'erro') {
+        card.children[0].outerHTML = '<div style="color:var(--danger);font-size:14px">✗</div>';
+        card.children[card.children.length - 1].textContent = ev.erro || 'erro';
+        card.children[card.children.length - 1].style.color = 'var(--danger)';
+      }
+    });
+
+    // mescla no _licAtual SEM sobrescrever o que já está preenchido
+    aplicarDadosExtraidos(dados);
+    mostrarResumoExtracao(dados, files);
+    toast(`${dados.arquivosLidos.length} arquivo(s) lido(s) com sucesso`);
+
+    // re-renderiza para refletir os campos preenchidos
+    setTimeout(() => Router.render(), 300);
+  } catch (e) {
+    console.error(e);
+    toast('Erro ao processar: ' + e.message, 'danger');
+    progresso.innerHTML += `<div class="alert warn" style="margin-top:8px">Erro: ${e.message}</div>`;
+  }
+}
+
+function aplicarDadosExtraidos(dados) {
+  // identificação
+  Object.entries(dados.identificacao || {}).forEach(([k, v]) => {
+    if (v && !_licAtual[k]) _licAtual[k] = v;
+  });
+  // datas
+  Object.entries(dados.datas || {}).forEach(([k, v]) => {
+    if (v && !_licAtual[k]) _licAtual[k] = v;
+  });
+  // PPU (apenas se ainda não tem itens)
+  if (dados.ppu?.itens?.length && (!_licAtual.ppu?.itens || _licAtual.ppu.itens.length === 0)) {
+    _licAtual.ppu = _licAtual.ppu || { itens: [], valorTotal: 0 };
+    _licAtual.ppu.itens = dados.ppu.itens;
+  }
+  // registra evento
+  _licAtual.eventos = [...(_licAtual.eventos || []), {
+    data: new Date().toISOString(),
+    tipo: 'importacao',
+    descricao: `Importação automática: ${dados.arquivosLidos.length} arquivo(s)`,
+    usuarioId: FB.user?.uid || null,
+    usuarioNome: FB.userDoc?.displayName || null
+  }];
+}
+
+function mostrarResumoExtracao(dados, files) {
+  const progresso = document.getElementById('edital-progresso');
+  const resultado = document.getElementById('edital-resultado');
+  progresso.style.display = 'none';
+  resultado.style.display = 'block';
+
+  const totalCampos = (Object.keys(dados.identificacao || {}).length)
+                    + (Object.keys(dados.datas || {}).length);
+  const totalItens = dados.ppu?.itens?.length || 0;
+
+  resultado.innerHTML = `
+    <div class="alert info" style="background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.3)">
+      <span style="font-size:20px">✓</span>
+      <div>
+        <strong>Leitura concluída</strong> · ${dados.arquivosLidos.length} arquivo(s) lido(s)
+        ${totalCampos > 0 ? `<br/><span class="text-muted" style="font-size:12px">${totalCampos} campos preenchidos no formulário abaixo</span>` : ''}
+        ${totalItens > 0 ? `<br/><span class="text-muted" style="font-size:12px">${totalItens} itens importados para a PPU</span>` : ''}
+      </div>
+    </div>
+    ${dados.erros && dados.erros.length ? `
+      <div class="alert warn" style="margin-top:8px">
+        <span>⚠️</span>
+        <div>
+          <strong>${dados.erros.length} arquivo(s) com erro:</strong><br/>
+          ${dados.erros.map(e => `<span style="font-size:12px">• ${e.nome}: ${e.erro}</span>`).join('<br/>')}
+        </div>
+      </div>
+    ` : ''}
+    <div class="text-muted" style="font-size:11px;margin-top:8px">
+      Revise e ajuste os campos abaixo. O que estava em branco foi preenchido; o que já tinha valor não foi alterado.
+    </div>
+  `;
+}
+
+function salvarLicitacao() {
+  if (!_licAtual.numero || !_licAtual.numero.trim()) {
+    toast('Informe o número da oportunidade', 'danger');
+    return;
+  }
+  if (!_licAtual.objeto || !_licAtual.objeto.trim()) {
+    toast('Informe o objeto da licitação', 'danger');
+    return;
+  }
+
+  if (_licAtual.id) {
+    Store.licitacoes.update(_licAtual.id, _licAtual);
+    toast('Licitação atualizada');
+  } else {
+    const criada = Store.licitacoes.add(_licAtual);
+    toast('Licitação criada — ' + criada.numero);
+    _licAtual = criada;
+    Router.navigate('#/licitacoes/' + criada.id);
+    return;
+  }
+  Router.render();
+}
+
+window.viewLicitacoes = viewLicitacoes;
+window.bindLicitacoesView = bindLicitacoesView;
+window.viewLicitacaoEdit = viewLicitacaoEdit;
+window.bindLicitacaoEdit = bindLicitacaoEdit;
+
+// ============================================
+// CONFIGURAÇÕES
+// ============================================
+function viewConfig() {
+  const c = Store.state.config;
+  return `
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><div class="card-title">Dados da empresa</div></div>
+      <div class="card-body">
+        <div class="form-grid cols-2">
+          <div class="field"><label>Razão social / nome</label>
+            <input class="input" data-cfg="empresa" value="${c.empresa || ''}"/></div>
+          <div class="field"><label>CNPJ</label>
+            <input class="input mono" data-cfg="cnpj" value="${c.cnpj || ''}"/></div>
+          <div class="field"><label>Responsável técnico</label>
+            <input class="input" data-cfg="responsavel" value="${c.responsavel || ''}"/></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><div class="card-title">Parâmetros padrão</div></div>
+      <div class="card-body">
+        <div class="form-grid cols-3">
+          <div class="field"><label>Margem padrão (%)</label>
+            <input class="input mono" type="number" step="0.1" data-cfg="margem" value="${((c.margem || 0) * 100).toFixed(2)}"/></div>
+          <div class="field"><label>Impostos (%)</label>
+            <input class="input mono" type="number" step="0.01" data-cfg="impostos" value="${((c.impostos || 0) * 100).toFixed(2)}"/></div>
+          <div class="field"><label>Cotação USD (R$)</label>
+            <input class="input mono" type="number" step="0.01" data-cfg="dolar" value="${c.dolar || 0}"/></div>
+        </div>
+        <div class="alert info mt-16">
+          <span>${Icons.calculator}</span>
+          <div>
+            <strong>Sobre os impostos:</strong> o sistema aplica gross-up — divide o subtotal por (1 - alíquota) para que o valor final já inclua o imposto repassado ao cliente.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><div class="card-title">Backup & dados</div></div>
+      <div class="card-body">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" data-action="export-tudo">${Icons.download} Exportar todos os dados (JSON)</button>
+          <button class="btn" data-action="import-tudo">${Icons.upload} Importar JSON</button>
+          <button class="btn btn-danger" data-action="reset-tudo">${Icons.trash} Restaurar dados iniciais</button>
+        </div>
+        <div class="alert warn mt-16">
+          Os dados ficam salvos no <strong>localStorage do navegador</strong>. Sempre exporte um backup JSON antes de limpar histórico ou trocar de máquina.
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function bindConfigView() {
+  // Debounce: só salva 500ms depois da última tecla, evita 1 escrita por caractere
+  const debouncers = {};
+  document.querySelectorAll('[data-cfg]').forEach(el => {
+    el.oninput = () => {
+      const field = el.dataset.cfg;
+      let v = el.value;
+      if (field === 'margem' || field === 'impostos') v = parseNum(v) / 100;
+      else if (field === 'dolar') v = parseNum(v);
+
+      // Atualiza o estado local imediatamente (sem persistir ainda) — mantém o input responsivo
+      Store.state.config = { ...Store.state.config, [field]: v };
+
+      // Persiste depois de 500ms sem novas teclas
+      clearTimeout(debouncers[field]);
+      debouncers[field] = setTimeout(() => {
+        Store.setConfig({ [field]: v });
+      }, 500);
+    };
+  });
+}
+
+window.viewPropostaPrint = viewPropostaPrint;
+window.viewConfig = viewConfig;
+window.bindConfigView = bindConfigView;
+
+// ============================================
+// USUÁRIOS (admin)
+// ============================================
+let _usersCache = [];
+
+function viewUsuarios() {
+  if (!FB.can('canManageUsers')) {
+    return `<div class="empty"><h3>Acesso negado</h3><p>Apenas administradores podem gerenciar usuários.</p></div>`;
+  }
+  if (!_usersCache.length) {
+    // Dispara carregamento e mostra loader. O bindUsuariosView faz a re-render.
+    return `
+      <div class="empty">
+        <div style="width:32px;height:32px;border:3px solid var(--bg-3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div>
+        <h3>Carregando usuários…</h3>
+      </div>
+      <style>@keyframes spin { to { transform: rotate(360deg); } }</style>`;
+  }
+  const ativos     = _usersCache.filter(u => u.active);
+  const pendentes  = _usersCache.filter(u => !u.active);
+
+  return `
+    <div class="alert info" style="margin-bottom:16px">
+      <span>${Icons.users}</span>
+      <div>
+        <strong>Como funciona:</strong> qualquer pessoa pode entrar com a conta Google, mas fica como visualizador <strong>inativo</strong> até você aprovar aqui. Defina o nível adequado para cada um.
+      </div>
+    </div>
+
+    ${pendentes.length ? `
+      <div class="card" style="margin-bottom:16px;border-color:rgba(245,165,36,0.3)">
+        <div class="card-header"><div class="card-title" style="color:var(--accent)">Aguardando aprovação · ${pendentes.length}</div></div>
+        <div class="card-body dense">
+          <div class="table-wrap"><table>
+            <thead><tr><th>Usuário</th><th>E-mail</th><th>Função</th><th></th></tr></thead>
+            <tbody>
+              ${pendentes.map(u => linhaUsuario(u)).join('')}
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+    ` : ''}
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Usuários ativos · ${ativos.length}</div></div>
+      <div class="card-body dense">
+        ${ativos.length === 0 ? `<div class="empty" style="padding:32px"><h3 style="font-size:14px">Nenhum usuário ativo</h3></div>` : `
+          <div class="table-wrap"><table>
+            <thead><tr><th>Usuário</th><th>E-mail</th><th>Função</th><th>Cadastrado em</th><th></th></tr></thead>
+            <tbody>
+              ${ativos.map(u => linhaUsuario(u, true)).join('')}
+            </tbody>
+          </table></div>
+        `}
+      </div>
+    </div>`;
+}
+
+function linhaUsuario(u, mostrarData=false) {
+  const isMe = u.uid === FB.user?.uid;
+  return `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          ${u.photoURL ? `<img src="${u.photoURL}" referrerpolicy="no-referrer" alt="" style="width:28px;height:28px;border-radius:50%"/>` : `<div class="brand-mark" style="width:28px;height:28px;font-size:11px;background:var(--bg-3);color:var(--text-1)">${(u.displayName||'?').slice(0,2).toUpperCase()}</div>`}
+          <div>
+            <strong>${u.displayName||'—'}</strong>
+            ${isMe ? `<span class="badge" style="margin-left:6px">Você</span>` : ''}
+          </div>
+        </div>
+      </td>
+      <td class="text-mono text-muted" style="font-size:12px">${u.email||'—'}</td>
+      <td>
+        <select class="select" data-user-role="${u.uid}" ${isMe ? 'disabled' : ''} style="min-width:140px">
+          ${FB.ROLES.map(r => `<option value="${r}" ${u.role===r?'selected':''}>${FB.ROLE_LABELS[r]}</option>`).join('')}
+        </select>
+      </td>
+      ${mostrarData ? `<td class="text-muted" style="font-size:12px">${u.createdAt ? fmtDate(u.createdAt) : '—'}</td>` : ''}
+      <td>
+        <div class="row-actions">
+          ${u.active ? `
+            ${isMe ? '' : `<button class="btn btn-sm" data-action="user-deactivate" data-uid="${u.uid}">Desativar</button>`}
+          ` : `
+            <button class="btn btn-sm btn-primary" data-action="user-activate" data-uid="${u.uid}">Aprovar</button>
+          `}
+        </div>
+      </td>
+    </tr>`;
+}
+
+function bindUsuariosView() {
+  // bind dos selects de role (se já tem cache)
+  document.querySelectorAll('[data-user-role]').forEach(sel => {
+    sel.onchange = async () => {
+      const uid = sel.dataset.userRole;
+      const newRole = sel.value;
+      try {
+        await FB.updateUserRole(uid, { role: newRole });
+        toast('Função atualizada');
+        const idx = _usersCache.findIndex(u => u.uid === uid);
+        if (idx >= 0) _usersCache[idx].role = newRole;
+      } catch (e) {
+        toast('Erro: ' + e.message, 'danger');
+      }
+    };
+  });
+
+  // Se ainda não carregou, busca
+  if (!_usersCache.length) {
+    FB.listUsers().then(u => {
+      _usersCache = u;
+      if (window.location.hash === '#/usuarios') {
+        Router.render();
+      }
+    }).catch(e => {
+      toast('Erro ao carregar usuários: ' + e.message, 'danger');
+    });
+  }
+}
+
+window.viewUsuarios = viewUsuarios;
+window.bindUsuariosView = bindUsuariosView;
+
+// ============================================
+// app.js — Router + bootstrap
+// ============================================
+
+const Router = {
+  routes: {
+    '#/':              { title: 'Dashboard',    breadcrumb: 'Visão geral',   nav: 'dashboard', render: viewDashboard,  bind: null },
+    '#/insumos':       { title: 'Insumos',      breadcrumb: 'Cadastros',     nav: 'insumos',   render: viewInsumos,    bind: bindInsumosView },
+    '#/mao-obra':      { title: 'Mão de obra',  breadcrumb: 'Cadastros',     nav: 'mo',        render: viewMaoObra,    bind: null },
+    '#/propostas':     { title: 'Propostas',    breadcrumb: 'Precificador',  nav: 'propostas', render: viewPropostas,  bind: bindPropostasView },
+    '#/propostas/nova':{ title: 'Nova proposta',breadcrumb: 'Propostas / Nova', nav: 'propostas', render: viewPropostaEdit, bind: bindPropostaEdit },
+    '#/licitacoes':    { title: 'Licitações',   breadcrumb: 'Licitações',    nav: 'licitacoes',render: viewLicitacoes, bind: bindLicitacoesView },
+    '#/licitacoes/nova':{ title:'Nova licitação',breadcrumb:'Licitações / Nova',nav:'licitacoes',render: viewLicitacaoEdit,bind: bindLicitacaoEdit },
+    '#/config':        { title: 'Configurações',breadcrumb: 'Sistema',       nav: 'config',    render: viewConfig,     bind: bindConfigView },
+    '#/usuarios':      { title: 'Usuários',     breadcrumb: 'Sistema',       nav: 'usuarios',  render: viewUsuarios,   bind: bindUsuariosView }
+  },
+
+  current: '#/',
+
+  navigate(hash) {
+    window.location.hash = hash || '#/';
+  },
+
+  render() {
+    let hash = window.location.hash || '#/';
+
+    // rotas dinâmicas
+    // #/propostas/:id        -> editar
+    // #/propostas/:id/print  -> imprimir
+    // #/licitacoes/:id       -> editar licitação
+    let route = this.routes[hash];
+    let propostaId = null;
+    let modePrint = false;
+    let licitacaoId = null;
+
+    if (!route) {
+      const m1 = hash.match(/^#\/propostas\/([\w]+)\/print$/);
+      const m2 = hash.match(/^#\/propostas\/([\w]+)$/);
+      const m3 = hash.match(/^#\/licitacoes\/([\w]+)$/);
+      if (m1) {
+        propostaId = m1[1];
+        modePrint = true;
+      } else if (m2) {
+        propostaId = m2[1];
+      } else if (m3 && m3[1] !== 'nova') {
+        licitacaoId = m3[1];
+      }
+    }
+
+    let title, breadcrumb, navKey, html;
+
+    if (licitacaoId) {
+      // Carrega licitação atual
+      const lic = Store.licitacoes.get(licitacaoId);
+      if (!lic) {
+        title = 'Licitação não encontrada';
+        breadcrumb = 'Licitações';
+        navKey = 'licitacoes';
+        html = `<div class="empty"><h3>Licitação não encontrada</h3><p>Talvez tenha sido excluída. Volte para <a href="#/licitacoes">a lista</a></p></div>`;
+      } else {
+        _licAtual = JSON.parse(JSON.stringify(lic));
+        title = 'Licitação ' + (lic.numero || '');
+        breadcrumb = 'Licitações / Editar';
+        navKey = 'licitacoes';
+        html = viewLicitacaoEdit();
+      }
+    } else if (propostaId) {
+      if (modePrint) {
+        const p = Store.propostas.get(propostaId);
+        title = 'Proposta ' + (p?.numero || '');
+        breadcrumb = 'Propostas / Visualizar';
+        navKey = 'propostas';
+        html = viewPropostaPrint(p);
+      } else {
+        const atual = _getPropostaAtual();
+        if (!atual || atual.id !== propostaId) {
+          carregarProposta(propostaId);
+        }
+        title = 'Editar proposta ' + (_getPropostaAtual()?.numero || '');
+        breadcrumb = 'Propostas / Editar';
+        navKey = 'propostas';
+        html = viewPropostaEdit();
+      }
+    } else if (route) {
+      if (hash === '#/propostas/nova') {
+        const atual = _getPropostaAtual();
+        if (!atual || atual.id) {
+          carregarProposta(null);
+        }
+      } else if (this.current && this.current.startsWith('#/propostas/') && hash !== this.current) {
+        carregarProposta(null);
+        window._clearPropostaAtual && window._clearPropostaAtual();
+      } else if (hash === '#/licitacoes/nova') {
+        // reseta editor de licitação
+        _licAtual = null;
+      } else if (this.current && this.current.startsWith('#/licitacoes/') && hash !== this.current && hash !== '#/licitacoes/nova') {
+        // saiu da rota de licitação → limpa
+        _licAtual = null;
+      }
+      title = route.title;
+      breadcrumb = route.breadcrumb;
+      navKey = route.nav;
+      html = route.render();
+    } else {
+      title = '404';
+      breadcrumb = 'Página não encontrada';
+      html = `<div class="empty"><h3>Página não encontrada</h3><p>Volte para o <a href="#/">início</a></p></div>`;
+    }
+
+    // header
+    document.getElementById('page-title').textContent = title;
+    document.getElementById('page-breadcrumb').textContent = breadcrumb;
+
+    // nav active
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.nav === navKey);
+    });
+
+    // content
+    document.getElementById('content').innerHTML = html;
+
+    // bindings
+    if (hash === '#/propostas/nova' || propostaId && !modePrint) {
+      bindPropostaEdit();
+    } else if (hash === '#/licitacoes/nova' || licitacaoId) {
+      bindLicitacaoEdit();
+    } else if (route?.bind) {
+      route.bind();
+    }
+
+    // Aplicar permissões
+    applyPermissionVisibility();
+
+    this.current = hash;
+  }
+};
+
+function applyPermissionVisibility() {
+  if (Store.mode !== 'firebase') return;
+  document.querySelectorAll('[data-action]').forEach(el => {
+    const action = el.dataset.action;
+    const perm = ACTION_PERMS[action];
+    if (perm && !FB.can(perm)) {
+      el.style.display = 'none';
+    }
+  });
+
+  // Inputs e selects em modo "só leitura" para visualizadores em telas críticas
+  if (!FB.can('canEditInsumos') && (location.hash === '#/insumos' || location.hash.startsWith('#/propostas'))) {
+    // ok — botões já escondidos. Inputs de proposta dependem de canEditProposta
+  }
+  if (!FB.can('canEditProposta') && location.hash.match(/^#\/propostas\/[^/]+$/) && !location.hash.endsWith('/print')) {
+    document.querySelectorAll('#content input, #content select, #content textarea').forEach(el => {
+      el.disabled = true;
+    });
+  }
+  if (!FB.can('canChangeMarginTax') && location.hash.match(/^#\/propostas\/[^/]+$/)) {
+    document.querySelectorAll('[data-prop="margem"], [data-prop="impostos"]').forEach(el => el.disabled = true);
+  }
+  if (!FB.can('canEditConfig') && location.hash === '#/config') {
+    document.querySelectorAll('#content input, #content select').forEach(el => el.disabled = true);
+  }
+}
+
+window.Router = Router;
+
+// ============================================
+// Layout estático (sidebar + topbar)
+// ============================================
+function renderLayout() {
+  const usuario = FB.isLoggedIn() ? FB.userDoc : null;
+  const modoLabel = Store.mode === 'firebase' ? 'NUVEM' : 'LOCAL';
+  const podeVerUsuarios = FB.can('canManageUsers');
+
+  document.body.innerHTML = `
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-mark">PR</div>
+          <div>
+            <div class="brand-name">Precificador</div>
+            <div class="brand-sub">Licitações & Propostas</div>
+          </div>
+        </div>
+        <nav class="nav">
+          <div class="nav-label">Geral</div>
+          <a class="nav-item" data-nav="dashboard" href="#/">${Icons.dashboard}<span>Dashboard</span></a>
+
+          <div class="nav-label">Precificador</div>
+          <a class="nav-item" data-nav="propostas" href="#/propostas">${Icons.file}<span>Propostas</span></a>
+
+          <div class="nav-label">Licitações</div>
+          <a class="nav-item" data-nav="licitacoes" href="#/licitacoes">${Icons.briefcase || Icons.file}<span>Licitações</span></a>
+
+          <div class="nav-label">Cadastros</div>
+          <a class="nav-item" data-nav="insumos" href="#/insumos">${Icons.package}<span>Insumos</span></a>
+          <a class="nav-item" data-nav="mo" href="#/mao-obra">${Icons.users}<span>Mão de obra</span></a>
+
+          <div class="nav-label">Sistema</div>
+          <a class="nav-item" data-nav="config" href="#/config">${Icons.settings}<span>Configurações</span></a>
+          ${podeVerUsuarios ? `<a class="nav-item" data-nav="usuarios" href="#/usuarios">${Icons.users}<span>Usuários</span></a>` : ''}
+        </nav>
+        ${usuario ? `
+          <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px">
+            ${usuario.photoURL ? `<img src="${usuario.photoURL}" referrerpolicy="no-referrer" alt="" style="width:32px;height:32px;border-radius:50%;flex-shrink:0"/>` : `<div class="brand-mark" style="background:var(--bg-3);color:var(--text-1)">${(usuario.displayName||'?').slice(0,2).toUpperCase()}</div>`}
+            <div style="min-width:0;flex:1">
+              <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${usuario.displayName||usuario.email}</div>
+              <div class="brand-sub" style="margin-top:0">${FB.ROLE_LABELS[usuario.role]||usuario.role}</div>
+            </div>
+            <button class="btn btn-icon btn-ghost btn-sm" id="btn-logout" title="Sair">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+          </div>` : ''}
+        <div class="sidebar-footer">v1.0 · ${modoLabel}</div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar-title">
+            <h1 id="page-title">Dashboard</h1>
+            <span class="breadcrumb" id="page-breadcrumb">Visão geral</span>
+          </div>
+          <div class="topbar-actions">
+            ${Store.mode === 'local' ? `<button class="btn btn-sm" id="btn-export-quick">${Icons.download} Backup</button>` : ''}
+          </div>
+        </header>
+        <section class="content" id="content"></section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+  `;
+
+  const btnExport = document.getElementById('btn-export-quick');
+  if (btnExport) btnExport.onclick = exportarTudo;
+  const btnLogout = document.getElementById('btn-logout');
+  if (btnLogout) btnLogout.onclick = async () => {
+    if (!confirm('Sair da sua conta?')) return;
+    await FB.signOut();
+    location.reload();
+  };
+}
+
+// ============================================
+// Ações globais (delegação)
+// ============================================
+
+// Helper de permissão: em modo local sempre permite; em modo firebase consulta FB
+const Perm = {
+  can(perm) {
+    if (Store.mode === 'local') return true;
+    return FB.can(perm);
+  }
+};
+
+// Mapa de actions → permissão necessária
+const ACTION_PERMS = {
+  'novo-insumo':       'canEditInsumos',
+  'editar-insumo':     'canEditInsumos',
+  'excluir-insumo':    'canEditInsumos',
+  'novo-mo':           'canEditMO',
+  'editar-mo':         'canEditMO',
+  'excluir-mo':        'canEditMO',
+  'nova-proposta':     'canCreateProposta',
+  'duplicar-proposta': 'canCreateProposta',
+  'excluir-proposta':  'canDeleteProposta',
+  'add-item':          'canEditProposta',
+  'del-item':          'canEditProposta',
+  'add-mo':            'canEditProposta',
+  'del-mo':            'canEditProposta',
+  'salvar-proposta':   'canEditProposta',
+  'nova-licitacao':    'canCreateProposta',
+  'salvar-licitacao':  'canEditProposta',
+  'excluir-licitacao': 'canDeleteProposta',
+  'reset-tudo':        'canManageUsers',
+  'user-activate':     'canManageUsers',
+  'user-deactivate':   'canManageUsers'
+};
+
+function bindGlobalActions() {
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('[data-action]');
+    if (!target) return;
+    const action = target.dataset.action;
+    const id = target.dataset.id;
+    const idx = target.dataset.idx;
+
+    // Checa permissão
+    const requiredPerm = ACTION_PERMS[action];
+    if (requiredPerm && !Perm.can(requiredPerm)) {
+      toast('Você não tem permissão para esta ação', 'danger');
+      e.preventDefault(); e.stopPropagation();
+      return;
+    }
+
+    switch (action) {
+      // navegação
+      case 'nova-proposta':       Router.navigate('#/propostas/nova'); break;
+      case 'abrir-proposta':      Router.navigate('#/propostas/' + id); break;
+      case 'imprimir-proposta':   imprimirPropostaAtual(); break;
+      case 'voltar-edit':         Router.navigate('#/propostas/' + id); break;
+
+      // insumos
+      case 'novo-insumo':         openInsumoModal(); break;
+      case 'editar-insumo':       openInsumoModal(id); break;
+      case 'excluir-insumo':
+        confirmDialog('Excluir este insumo? Esta ação não pode ser desfeita.', () => {
+          Store.insumos.remove(id); toast('Insumo excluído'); Router.render();
+        });
+        break;
+
+      // mão de obra
+      case 'novo-mo':             openMaoObraModal(); break;
+      case 'editar-mo':           openMaoObraModal(id); break;
+      case 'excluir-mo':
+        confirmDialog('Excluir esta função? Esta ação não pode ser desfeita.', () => {
+          Store.maoObra.remove(id); toast('Função excluída'); Router.render();
+        });
+        break;
+
+      // propostas - editor
+      case 'add-item':            adicionarItem(); break;
+      case 'del-item':            removerItem(parseInt(idx)); break;
+      case 'add-mo':              adicionarMO(); break;
+      case 'del-mo':              removerMO(parseInt(idx)); break;
+      case 'salvar-proposta':     salvarProposta(); break;
+
+      // propostas - lista
+      case 'duplicar-proposta':
+        const orig = Store.propostas.get(id);
+        if (orig) {
+          const novo = JSON.parse(JSON.stringify(orig));
+          novo.id = null; novo.numero = ''; novo.status = 'rascunho';
+          Store.propostas.add(novo);
+          toast('Proposta duplicada — ' + novo.numero);
+          Router.render();
+        }
+        break;
+      case 'excluir-proposta':
+        confirmDialog('Excluir esta proposta? Esta ação não pode ser desfeita.', () => {
+          Store.propostas.remove(id); toast('Proposta excluída'); Router.render();
+        });
+        break;
+
+      // licitações
+      case 'nova-licitacao':
+        _licAtual = null;
+        Router.navigate('#/licitacoes/nova');
+        break;
+      case 'abrir-licitacao':
+        Router.navigate('#/licitacoes/' + id);
+        break;
+      case 'salvar-licitacao':
+        salvarLicitacao();
+        break;
+      case 'voltar-licitacoes':
+        Router.navigate('#/licitacoes');
+        break;
+      case 'excluir-licitacao':
+        confirmDialog('Excluir esta licitação? Esta ação não pode ser desfeita.', () => {
+          Store.licitacoes.remove(id);
+          toast('Licitação excluída');
+          Router.navigate('#/licitacoes');
+        });
+        break;
+
+      // backup
+      case 'export-tudo':         exportarTudo(); break;
+      case 'export-insumos':      exportarInsumos(); break;
+      case 'import-tudo':         importarTudo(); break;
+      case 'reset-tudo':
+        confirmDialog('Restaurar dados iniciais? <strong>Tudo será apagado</strong> e voltará ao seed da planilha base.', () => {
+          Store.reset(); toast('Dados restaurados'); Router.navigate('#/'); Router.render();
+        });
+        break;
+
+      // usuários (admin)
+      case 'user-activate':
+        (async () => {
+          try {
+            await FB.updateUserRole(target.dataset.uid, { active: true });
+            toast('Usuário aprovado');
+            _usersCache = await FB.listUsers();
+            Router.render();
+          } catch (e) { toast('Erro: ' + e.message, 'danger'); }
+        })();
+        break;
+      case 'user-deactivate':
+        confirmDialog('Desativar este usuário? Ele perderá o acesso ao sistema.', async () => {
+          try {
+            await FB.updateUserRole(target.dataset.uid, { active: false });
+            toast('Usuário desativado');
+            _usersCache = await FB.listUsers();
+            Router.render();
+          } catch (e) { toast('Erro: ' + e.message, 'danger'); }
+        });
+        break;
+    }
+  });
+}
+
+function imprimirPropostaAtual() {
+  const p = _getPropostaAtual();
+  if (!p) return;
+  // salva primeiro se ainda não foi salvo
+  if (!p.id) {
+    if (!p.cliente?.nome) { toast('Informe o cliente antes de imprimir', 'danger'); return; }
+    recalcularProposta(p);
+    const saved = Store.propostas.add(p);
+    Router.navigate('#/propostas/' + saved.id + '/print');
+  } else {
+    recalcularProposta(p);
+    Store.propostas.update(p.id, p);
+    Router.navigate('#/propostas/' + p.id + '/print');
+  }
+}
+
+// ============================================
+// Export / Import
+// ============================================
+function exportarTudo() {
+  const json = Store.export();
+  const ts = new Date().toISOString().slice(0,10);
+  downloadFile(`precificador-backup-${ts}.json`, json, 'application/json');
+  toast('Backup exportado');
+}
+
+function exportarInsumos() {
+  const csv = ['codigo,descricao,categoria,unidade,preco,rendimento'];
+  Store.insumos.list().forEach(i => {
+    csv.push([
+      i.codigo || '',
+      `"${(i.descricao || '').replace(/"/g, '""')}"`,
+      i.categoria || '',
+      i.unidade || '',
+      i.preco || 0,
+      i.rendimento || 0
+    ].join(','));
+  });
+  const ts = new Date().toISOString().slice(0,10);
+  downloadFile(`insumos-${ts}.csv`, csv.join('\n'), 'text/csv;charset=utf-8');
+  toast('Insumos exportados em CSV');
+}
+
+function importarTudo() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if (Store.import(ev.target.result)) {
+        toast('Dados importados com sucesso');
+        Router.render();
+      } else {
+        toast('Arquivo inválido', 'danger');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ============================================
+// Boot
+// ============================================
+async function init() {
+  // Detecta configuração do Firebase
+  const hasFirebase = window.firebaseConfig && window.firebaseConfig.apiKey;
+
+  if (hasFirebase) {
+    Store.mode = 'firebase';
+    Store.load();   // inicializa state vazio
+    renderLayout();
+    bindGlobalActions();
+    window.addEventListener('hashchange', () => Router.render());
+
+    // Mostra splash de login enquanto Firebase carrega
+    document.getElementById('content').innerHTML = `
+      <div class="empty" style="padding:120px 24px">
+        <div style="width:48px;height:48px;border:3px solid var(--bg-3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 24px"></div>
+        <h3>Conectando ao Firebase…</h3>
+      </div>
+      <style>@keyframes spin { to { transform: rotate(360deg); } }</style>`;
+
+    try {
+      await FB.init(window.firebaseConfig, onAuthChange);
+    } catch (e) {
+      console.error('Erro Firebase', e);
+      document.getElementById('content').innerHTML = `
+        <div class="alert warn" style="margin:48px auto;max-width:600px">
+          <strong>Erro ao conectar com o Firebase:</strong> ${e.message}
+          <br/><br/>Verifique a configuração no início do arquivo HTML.
+        </div>`;
+    }
+  } else {
+    // Modo local (localStorage)
+    Store.mode = 'local';
+    Store.load();
+    renderLayout();
+    bindGlobalActions();
+    window.addEventListener('hashchange', () => Router.render());
+    Router.render();
+  }
+}
+
+function onAuthChange() {
+  if (!FB.user) {
+    // Não logado → mostra tela de login
+    showLoginScreen();
+    return;
+  }
+  if (!FB.userDoc) {
+    // Logado mas erro ao criar/ler doc → mostra tela de erro
+    showErrorScreen(FB._lastError || 'Erro desconhecido ao carregar seu perfil.');
+    return;
+  }
+  if (!FB.userDoc.active) {
+    // Logado mas pendente
+    showPendingScreen();
+    return;
+  }
+  // Logado e ativo → sincroniza dados e renderiza
+  FB.syncAll((tipo) => {
+    // Se o usuário está digitando num input/textarea/select, NÃO re-renderiza (evita perder foco)
+    const ae = document.activeElement;
+    const digitando = ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT');
+    if (digitando) {
+      // marca pra re-renderizar quando o usuário sair do campo
+      window._pendingRender = true;
+      return;
+    }
+    Router.render();
+    updateUserBadge();
+  });
+
+  // Quando o usuário sair de um campo (blur), aplica render pendente — listener uma vez só
+  if (!window._focusOutBound) {
+    window._focusOutBound = true;
+    document.addEventListener('focusout', () => {
+      setTimeout(() => {
+        if (window._pendingRender && !document.activeElement?.tagName?.match(/INPUT|TEXTAREA|SELECT/)) {
+          window._pendingRender = false;
+          Router.render();
+        }
+      }, 100);
+    }, true);
+  }
+
+  Router.render();
+  updateUserBadge();
+}
+
+function showErrorScreen(msg) {
+  document.body.innerHTML = `
+    <div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--bg-0)">
+      <div style="max-width:520px;width:100%;background:var(--bg-1);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-lg);padding:48px 40px;text-align:center">
+        <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+        <h2 style="font-size:18px;margin-bottom:12px;color:var(--danger)">Erro ao acessar o sistema</h2>
+        <p style="color:var(--text-1);font-size:13px;margin-bottom:8px;line-height:1.7">${msg}</p>
+        <p style="color:var(--text-2);font-size:12px;margin-bottom:24px;line-height:1.7">
+          Abra o Console do navegador (F12) → aba "Console" pra ver detalhes técnicos.
+        </p>
+        <button class="btn" id="btn-logout-err" style="width:100%">Sair e tentar novamente</button>
+      </div>
+    </div>`;
+  document.getElementById('btn-logout-err').onclick = async () => {
+    await FB.signOut();
+    location.reload();
+  };
+}
+
+function showLoginScreen() {
+  document.body.innerHTML = `
+    <div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--bg-0);background-image:radial-gradient(circle at 30% 20%, #1a1f2a 0%, transparent 60%), radial-gradient(circle at 70% 80%, #15202c 0%, transparent 60%);">
+      <div style="max-width:420px;width:100%;background:var(--bg-1);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px 40px;text-align:center;box-shadow:var(--shadow-lg)">
+        <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:32px">
+          <div class="brand-mark" style="width:48px;height:48px;font-size:18px">PR</div>
+          <div style="text-align:left">
+            <div style="font-weight:800;font-size:18px;letter-spacing:-0.02em">Precificador</div>
+            <div class="brand-sub">Licitações & Propostas</div>
+          </div>
+        </div>
+        <h2 style="font-size:20px;margin-bottom:12px">Acesse o sistema</h2>
+        <p style="color:var(--text-2);font-size:13px;margin-bottom:32px;line-height:1.6">
+          Faça login com sua conta Google para começar a usar.<br/>
+          <span style="font-size:11px;color:var(--text-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.1em">Apenas usuários autorizados terão acesso aos dados</span>
+        </p>
+        <button class="btn btn-primary" id="btn-login-google" style="width:100%;padding:14px;font-size:14px;display:flex;justify-content:center;align-items:center;gap:10px">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#0a0d12" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#0a0d12" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#0a0d12" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#0a0d12" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Entrar com Google
+        </button>
+        <div style="margin-top:24px;padding:12px;background:var(--bg-2);border-radius:var(--radius);font-size:11px;color:var(--text-2);line-height:1.6">
+          <strong style="color:var(--accent)">Primeiro acesso?</strong> O primeiro usuário a entrar se torna automaticamente o <strong>administrador</strong> do sistema.
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('btn-login-google').onclick = async () => {
+    try {
+      await FB.signInGoogle();
+    } catch (e) {
+      alert('Erro ao entrar: ' + e.message);
+    }
+  };
+}
+
+function showPendingScreen() {
+  document.body.innerHTML = `
+    <div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--bg-0)">
+      <div style="max-width:480px;width:100%;background:var(--bg-1);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px 40px;text-align:center">
+        <div style="font-size:48px;margin-bottom:16px">⏳</div>
+        <h2 style="font-size:18px;margin-bottom:12px">Aguardando aprovação</h2>
+        <p style="color:var(--text-2);font-size:13px;margin-bottom:24px;line-height:1.7">
+          Sua conta <strong>${FB.userDoc?.email}</strong> está cadastrada, mas ainda não foi aprovada.<br/><br/>
+          Peça para o administrador do sistema te aprovar e definir seu nível de acesso.
+        </p>
+        <button class="btn" id="btn-logout-pending" style="width:100%">Sair</button>
+      </div>
+    </div>`;
+  document.getElementById('btn-logout-pending').onclick = async () => {
+    await FB.signOut();
+    location.reload();
+  };
+}
+
+function updateUserBadge() {
+  // re-renderiza layout pra mostrar o usuário e nav de usuários quando admin
+  // (já fazemos isso no renderLayout, mas precisa rebindar)
+  renderLayout();
+  bindGlobalActions();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
